@@ -1,0 +1,59 @@
+\documentclass{beamer}
+
+\mode<presentation> {\usetheme{default}}
+
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title[ECE 901 Proposal Presentation]{Comparison of CNNs on Amazon EC2 versus FPGAs} % The short title appears at the bottom of every slide, the full title is only on the title page
+
+\author{Kyle Daruwalla and Akhil Sundararajan}
+\institute[UW-Madison]{ECE 901 Fall 2016}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\begin{frame}
+	\frametitle{Overview}
+	\tableofcontents
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+%	PRESENTATION SLIDES
+%----------------------------------------------------------------------------------------
+
+\section{Section 1}
+\begin{frame}
+	\frametitle{Test Slide}
+	Here is a test slide.
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{References}
+	\footnotesize{
+		\begin{thebibliography}{9} % Beamer does not support BibTeX so references must be inserted manually as below
+			\bibitem[Niu et al., 2011]{hogwild}
+			F. Niu, et al. (2011, Nov. 11).
+			\emph{Hogwild!: A Lock-Free Approach to Parallelizing Stochastic Gradient Descent} (v2) [Online].
+			Available: \url{https://arxiv.org/abs/1106.5730v2}
+		\end{thebibliography}
+	}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+	\Huge{\centerline{The End}}
+\end{frame}
+
+\end{document} 
