@@ -297,11 +297,12 @@ TSWLatexianTemp*
 ##	it might not be complete. In addition, XAPP 1165 should be followed.
 #########################################################################################################
 #########
-#Exclude all
+# Exclude all in Vivado directories
+# This means Vivado/Verilog/VHDL files must be contained within
+#  the directories listed below.
 #########
-*
-!*/
-!.gitignore
+#*
+#!*/
 ###########################################################################
 ##	VIVADO
 ###########################################################################
