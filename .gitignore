@@ -1,3 +1,5 @@
+# For Mac stuff
+*.DS_Store
 
 # Created by https://www.gitignore.io/api/python,latex,vivado
 
