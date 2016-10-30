@@ -1,1 +1,41 @@
-\textit{Information on implementing a neural network on FPGA}
+Each filter in the CNN will be modeled as a \textit{unit-neuron} on the FPGA (shown in Figure \ref{fig:unit-neuron}). During the compute phase, the selector signal $s$, will feed the current patch $(x_0, x_1, x_2, x_3, x_4)$ into the unit-neuron. A weight register file will hold the current weights, $(w_0, w_1, w_2, w_3, w_4)$. The activation function, $\sigma$, will be approximated using a lookup table if it is not piecewise linear. The output $f$ will store a single pixel of output for a given filter.
+\begin{figure}[hb]
+	\centering
+	\begin{tikzpicture}
+		\foreach \i in {0, ..., 4} {
+			\node[multiplexer] (mux\i) at (0, -2*\i) {};
+			\draw (mux\i.north west) --++ (-10pt, 0) node [left] {$x_\i$};
+			\draw (mux\i.south west) --++ (-10pt, 0) node [left] {$w_\i$};
+			\draw (mux\i.south) --++ (0, -10pt) node [below] {$s$};
+		}
+
+		\draw (2, 3) node[above right] {Weight Register File} rectangle (4, 1.75);
+		\draw (3, 1.75) --++ (0, -10pt) node[below] {$s$};
+		\foreach \i in {0, ..., 4} {
+			\draw ($(2, {2.75-0.25*\i})$) node[above] (wrf\i) {} --++ (2, 0) node[above] (wrf\i-out) {};
+			\draw [->] (mux\i.top side) node [above right] {$a_\i$} --++ (14pt, 0) --++ (0.2*\i, 0) node[circle, fill, draw, inner sep=-1pt] (junc\i) {} --++ ($(0, 2.875+1.75*\i)$) -- (wrf\i);
+		}
+
+		\foreach \i in {0, ..., 4} {
+			\node[circle, draw] (mul\i) at ($(5+0.5*\i, -2*\i)$) {$\times$};
+			\draw [->] (junc\i) -- (mul\i.west);
+			\draw [->] (wrf\i-out) --++ ($(1+0.5*\i, 0)$) -- (mul\i.north);
+		}
+
+		\node[circle, draw] (sum) at (9, -4) {$+$};
+
+		\foreach \i in {0, ..., 4} {
+			\node[rectangle, minimum height=0.5cm, minimum width=0.5cm, draw] (sigma\i) at ($(8, -2*\i)$) {$\sigma$};
+			\draw [->] (mul\i.east) -- (sigma\i.west);
+			\draw [->] (sigma\i.east) -- (sum);
+		}
+
+		\draw [->] (sum.east) --++ (10pt, 0) node[right] {$f$};
+	\end{tikzpicture}
+	\caption{A unit-neuron implementation for an FPGA with a filter size of 5}
+	\label{fig:unit-neuron}
+\end{figure}
+
+A controller will adjust $(x_0, x_1, x_2, x_3, x_4)$ so that it corresponds to the current patch being evaluated. After the compute phase is complete, it will update the $(w_0, w_1, w_2, w_3, w_4)$ values and drive $s$ high so that the weight register file can be updated. There will be latching (not shown in Figure \ref{fig:unit-neuron}) on the output values of the filters so that they can be held while the weights are updated.
+
+The potential for speedup comes from parallelizing the filter operation, using faster fixed-point computation units, and approximation of the activation function.

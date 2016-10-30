@@ -20,6 +20,20 @@
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{calc}
+
+\tikzset{
+  multiplexer/.style={
+    draw,
+    trapezium,
+    shape border uses incircle, 
+    shape border rotate=270,
+    minimum size=18pt
+  }
+}
 
 \bibliographystyle{ieeetr}
 
