@@ -1,1 +1,7 @@
-\textit{Set up the goals of the project.}
+\textit{Comparing Hardware Platforms}
+		We seek to compare training deep neural networks on different computing platforms.  The first aspect of the comparison will be to study training performance of the ImageNet dataset on Amazon EC2, which will serve as a baseline for a traditional single-machine CPU setting.  We then propose to design an FPGA hardware system on which to train deep neural networks.  Potential speedups in training the ImageNet database will be investigated in the FPGA system.  
+TensorFlow
+	\textit{Varying CNN Structure and Activation Function}
+Due to the variety of structural and parameter design choices typical in building a CNN, we propose to examine several CNN architectures in combination with the different hardware platforms considered in this project.  Several activation functions including sign, ReLU, and sigmoid will be explored. 
+	\textit{Efficacy of Parallelization}
+Furthermore, as an extension to the single-machine CPU setting, GPU acceleration on Amazon ec2 will be studied using TensorFlow.  Due to TensorFlow’s distributed execution capability, we also propose to train CNNs using the Hogwild! algorithm.   
