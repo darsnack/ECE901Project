@@ -28,6 +28,7 @@ Each filter in the CNN will be modeled as a \textit{unit-neuron} on the FPGA (sh
 			\node[rectangle, minimum height=0.5cm, minimum width=0.5cm, draw] (sigma\i) at ($(8, -2*\i)$) {$\sigma$};
 			\draw [->] (mul\i.east) -- (sigma\i.west);
 			\draw [->] (sigma\i.east) -- (sum);
+			\draw (sigma\i.south) --++ (0, -10pt) node[below] {$s$};
 		}
 
 		\draw [->] (sum.east) --++ (10pt, 0) node[right] {$f$};
