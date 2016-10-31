@@ -1,1 +1,8 @@
-\textit{Talk about analysis that we are targeting.}
+After creating an FPGA implementation of a neural network, timing characteristics for a particular CNN can be created. For example, the proposed unit-neuron will have some physical path delay, $\tau$. Using this known constant and the structure of our CNN, we would like to define a design space. This will allow a designer targeting neural networks on FPGAs to know the time per iteration as a function of $\tau$, the number of layers, and the CNN structure. This will provide some theoretical closed form for the computational complexity on an FPGA.
+
+Additionally, after collecting empirical results, we would like to do perform the following analysis:
+\begin{enumerate}
+	\item Comparing generalization error between the CPU, GPU, Hogwild!, and FPGA implementations.
+	\item Comparing convergance rates between the CPU, GPU, Hogwild!, and FPGA implementations.
+	\item Provide a metric of when FPGAs might provide a larger speedup than Hogwild!
+\end{enumerate}
