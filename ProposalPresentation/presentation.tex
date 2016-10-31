@@ -30,10 +30,71 @@
 %	PRESENTATION SLIDES
 %----------------------------------------------------------------------------------------
 
-\section{Section 1}
+\section{Introduction to CNNs and FPGAs}
 \begin{frame}
-	\frametitle{Test Slide}
-	Here is a test slide.
+	\frametitle{Convolutional Neural Networks (CNNs)}
+	\begin{equation}
+		\min_{f\in F}\sum_{i=1}^n \mathcal{L}(f(x_i);y_i)
+		\label{eq:erm}
+	\end{equation}
+	\begin{itemize}
+		\item Uses SGD with backpropagation to arrive at optimum
+		\item Inherently serial
+		\item Potential system overhead to perform per-iteration computation
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Field-Programmable Gate Arrays (FPGAs)}
+	\begin{itemize}
+		\item Reconfigurable hardware platform
+		\item Common target for real-time applications
+		\item Written in hardware description language (HDL)
+		\item Project Catapult is targeting FPGAs for NN implementation
+	\end{itemize}
+\end{frame}
+
+\section{Proposed work}
+\begin{frame}
+	\frametitle{Software Implementation}
+	\begin{itemize}
+		\item Google's TensorFlow -- describe CNNs at the layer level
+		\item Amazon EC2 for deployment
+		\begin{itemize}
+			\item Single CPU implementation
+			\item GPU implementation
+		\end{itemize}
+		\item {\sc{Hogwild!}} implementation for GPUs
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Hardware Implementation}
+	\begin{itemize}
+		\item Use FPGAs to build CNN structure
+		\item Modularize design into filters
+		\item Use controller to pass data through filters and update weights
+		\item Target cost-per-iteration speedup by optimizing filter units
+	\end{itemize}
+\end{frame}
+
+\section{Proposed analysis}
+\begin{frame}
+	\frametitle{Theoretical Analysis}
+	\begin{itemize}
+		\item Use FPGA implementation to define constant bounds on time per filter operation
+		\item Use timing constants + CNN structure to provide theoretical bound on cost-per-iteration
+		\item Analyze computational complexity in terms of this cost-per-iteration
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Emperical Results}
+	\begin{itemize}
+		\item Comparing generalization error between the CPU, GPU, Hogwild!, and FPGA implementations.
+		\item Comparing convergance rates between the CPU, GPU, Hogwild!, and FPGA implementations.
+		\item Provide a metric of when FPGAs might provide a larger speedup than Hogwild!
+	\end{itemize}
 \end{frame}
 
 %------------------------------------------------
