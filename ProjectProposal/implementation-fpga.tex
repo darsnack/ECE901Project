@@ -1,5 +1,5 @@
 Each filter in the CNN will be modeled as a \textit{unit-neuron} on the FPGA (shown in Figure \ref{fig:unit-neuron}). During the compute phase, the selector signal $s$, will feed the current patch $(x_0, x_1, x_2, x_3, x_4)$ into the unit-neuron. A weight register file will hold the current weights, $(w_0, w_1, w_2, w_3, w_4)$. The activation function, $\sigma$, will be approximated using a lookup table if it is not piecewise linear. The output $f$ will store a single pixel of output for a given filter.
-\begin{figure}[hb]
+\begin{figure}[!hb]
 	\centering
 	\begin{tikzpicture}
 		\foreach \i in {0, ..., 4} {
