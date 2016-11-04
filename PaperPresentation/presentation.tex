@@ -30,10 +30,72 @@
 %	PRESENTATION SLIDES
 %----------------------------------------------------------------------------------------
 
-\section{Section 1}
+\section{Background}
 \begin{frame}
-	\frametitle{Test Slide}
-	Here is a test slide.
+	\frametitle{Paper Overview}
+	\begin{enumerate}
+		\item Start generic two-layer CNN
+		\item Convex relaxation
+		\begin{enumerate}
+			\item Linear activation -- optimize for a low-rank matrix $A$ instead of filter weights and coefficients
+			\item Non-linear activation -- frame problem in terms of RKHS
+		\end{enumerate}
+		\item Introduce a kernel-based algorithm for CCNNs
+		\item Provide theoretical guarantees on the generalization error
+		\item Explain extensions like pooling and multi-layer CNNs
+		\item Provide experimental results on MNIST and CIFAR-10
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Convolutional Neural Networks}
+	\textit{Setting up CNN problem in context of paper. (two slides)}
+\end{frame}
+
+\section{Convex Relaxations}
+\subsection{Linear Activation Functions}
+\begin{frame}
+	\frametitle{Optimizing For Low-Rank Matrix (Linear Activation)}
+	\textit{Explain the process (show figure) and emphasize optimization over nuclear norm ball}
+\end{frame}
+
+\subsection{Non-Linear Activation Functions}
+\begin{frame}
+	\frametitle{Reproducing-Kernel Hilbert Space (RKHS)}
+	\textit{Background on RKHS and representer theorem}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Framing Problem Using RKHS}
+	\textit{Framing problem using RKHS}
+\end{frame}
+
+\section{Algorithm}
+\begin{frame}
+	\frametitle{CCNN Algorithm}
+	\textit{Introduce algorithm}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Solving ERM in CCNN Algorithm}
+	\textit{Details on solving minimization problem embedded in algorithm}
+\end{frame}
+
+\section{Theoretical Results}
+\begin{frame}
+	\frametitle{Bounds on Generalization Error}
+	\textit{Theorem 1}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Proof of Theorem 1}
+	\textit{Proof of theorem 1}
+\end{frame}
+
+\section{Experimental Results}
+\begin{frame}
+	\frametitle{Experimental Results}
+	\textit{State results}
 \end{frame}
 
 %------------------------------------------------
