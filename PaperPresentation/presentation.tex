@@ -1,9 +1,20 @@
-\documentclass{beamer}
+\documentclass[hyperref={colorlinks}]{beamer}
 
 \mode<presentation> {\usetheme{default}}
 
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\newcommand{\set}[1]{\mathbb{#1}}
+\newcommand{\trace}[1]{\mathrm{tr}\left(#1\right)}
+\newcommand{\rank}[1]{\text{rank}\left(#1\right)}
+
+\algsetup{
+	linenosize=\footnotesize,
+	linenodelimiter=.
+}
 
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
@@ -49,14 +60,78 @@
 
 \begin{frame}
 	\frametitle{Convolutional Neural Networks}
-	\textit{Setting up CNN problem in context of paper. (two slides)}
+	For an input vector, $x \in \set{R}^{d_0}$, and output vector, $y \in \set{R}^{d_2}$, define
+	$$\{z_p(x) \mid z_p(x) \in \set{R}^{d_1}\}_{j = 1}^P$$
+	to be the set of $P$ patches of $x$. \\
+	For a given $\sigma: \set{R} \mapsto \set{R}$, the output of a filter is
+	$$h_j(z) = \sigma(w_j^T z)$$
+	The output of a CNN is $f = (f_1(x), f_2(x), \ldots, f_{d_2}(x))$ is defined as
+	\begin{equation}
+		f_k(x) = \sum_{j = 1}^r \sum_{p = 1}^P \alpha_{k, j, p} h_j(z_p(x))
+		\label{eq:cnn-output}
+	\end{equation}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Convolutional Neural Networks}
+	CNNs are described by the class of models:
+	\begin{align}
+		\mathcal{F}_{\text{cnn}}(B_1, B_2) = \{f \text{ of the form Eq. \ref{eq:cnn-output} } & \mid \max_{j \in [r]} \|w_j\|_2 \leq B_1 \\ \nonumber
+		\text{ and } & \max_{k \in [d_2], j \in [r]} \|\alpha_{k, j}\|_2 \leq B_2\}
+		\label{eq:fcnn-class}
+	\end{align}
+	Given a set of samples $\{(x_i, y_i)\}_{i = 1}^n$, we want to solve the ERM:
+	\begin{equation}
+		\hat{f}_{\text{cnn}} = \arg \min_{f \in \mathcal{F}_{\text{cnn}}} \sum_{i = 1}^n \mathcal{L}(f(x_i), y_i)
+		\label{eq:cnn-erm}
+	\end{equation}
 \end{frame}
 
 \section{Convex Relaxations}
 \subsection{Linear Activation Functions}
 \begin{frame}
 	\frametitle{Optimizing For Low-Rank Matrix (Linear Activation)}
-	\textit{Explain the process (show figure) and emphasize optimization over nuclear norm ball}
+	For $x \in \set{R}^{d_0}$, define
+	$$Z(x) = \left[\begin{matrix}
+		z_1(x)^T \\
+		\vdots \\
+		z_P(x)^T
+	\end{matrix}\right] \text{ and } \alpha_{k, j} = \left[\begin{matrix}
+		\alpha_{k, j, 1} \\
+		\vdots \\
+		\alpha_{k, j, P}
+	\end{matrix}\right]$$
+	Then rewrite Eq. \ref{eq:cnn-output} with activation function, $\sigma(t) = t$, as
+	\begin{equation}
+		f_k(x) = \sum_{j = 1}^r \alpha_{k, j}^T Z(x) w_j = \trace{Z(x) \sum_{j = 1}^r w_j \alpha_{k, j}^T} = \trace{Z(x) A_k}
+		\label{eq:cnn-output-modified}
+	\end{equation}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Optimizing For Low-Rank Matrix (Linear Activation)}
+	\begin{figure}
+		\includegraphics[scale=0.3]{Linear-Case-Structure.png}
+		\caption{Reframing the problem in terms of a low-rank matrix, $A_k$, allows for convex optimization over a nuclear norm ball}
+		\label{fig:linear-case-structure}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Optimizing For Low-Rank Matrix (Linear Activation)}
+	The CNN class of models is then
+	\begin{align}
+		\mathcal{F}_{\text{cnn}}(B_1, B_2) = \{f \text{ of the form Eq. \ref{eq:cnn-output-modified} } & \mid \max_{j \in [r]} \|w_j\|_2 \leq B_1 \\ \nonumber
+		\text{ and } & \max_{k \in [d_2], j \in [r]} \|\alpha_{k, j}\|_2 \leq B_2\} \\ \nonumber
+		\text{ and } & \rank{A} = r
+		\label{eq:fcnn-class-modified}
+	\end{align}
+	Define the CCNN class of models as
+	\begin{equation}
+		\mathcal{F}_{\text{ccnn}}(B_1, B_2) = \{f \text{ of the form Eq. \ref{eq:cnn-output-modified} } \mid \|A\|_* \leq B_1 B_2 r \sqrt{d_2}\}
+		\label{eq:fccnn-class}
+	\end{equation}
+	where $\mathcal{F}_{\text{cnn}}(B_1, B_2) \subseteq \mathcal{F}_{\text{ccnn}}(B_1, B_2)$.
 \end{frame}
 
 \subsection{Non-Linear Activation Functions}
@@ -73,7 +148,21 @@
 \section{Algorithm}
 \begin{frame}
 	\frametitle{CCNN Algorithm}
-	\textit{Introduce algorithm}
+	~
+	\begin{algorithm}[H]
+		\caption{CCNN Algorithm}
+		\label{alg:ccnn-algorithm}
+		\footnotesize
+		\begin{algorithmic}[1]
+			\REQUIRE Data $\{(x_i, y_i)\}_{i = 1}^n$, kernel function $\mathcal{K}$, regularization parameter $R > 0$, number of filters $r$
+			\STATE Construct a matrix $K \in \set{R}^{nP \times nP}$ such that the entry at column $(i, p)$ and row $(i', p')$ is $\mathcal{K}(z_p(x_i), z_{p'}(x_{i'})$. Compute the factorization $K = QQ^T$ or an approximation, $K \approx QQ^T$, where $Q \in \set{R}^{nP \times m}$.
+			\STATE For each $x_i$, construct a patch matrix $Z(x_i) \in \set{R}^{P \times m}$ whose $p$-th row is the $(i, p)$-th row of $Q$.
+			\STATE Solve the following optimization problem to obtain a matrix $\hat{A} = (\hat{A}_1, \ldots, \hat{A}_{d_2})$
+			$$\hat{A} = \arg \min_{\|A\|_* \leq R} \tilde{\mathcal{L}}(A) \text{ where } \tilde{\mathcal{L}}(A) = \sum_{i = 1}^n \mathcal{L}\left((\trace{Z(x_i) A_1}, \ldots, \trace{Z(x_i) A_{d_2}}), y_i\right)$$
+			\STATE Compute a rank-$r$ approximation $\tilde{A} \approx \hat{U} \hat{V}^T$ where $\hat{U} \in \set{R}^{m \times r}$ and $\hat{V} \in \set{R}^{Pd_2 \times r}$.
+			\RETURN The predictor $\hat{f}_{\text{ccnn}}(x) = \left(\trace{Z(x) \hat{A}_1}, \ldots, \trace{Z(x) \hat{A}^{d_2}}\right)$ and the convolutional layer output $H(x) = \hat{U}^T (Z(x))^T$.
+		\end{algorithmic}
+	\end{algorithm}
 \end{frame}
 
 \begin{frame}
@@ -95,7 +184,55 @@
 \section{Experimental Results}
 \begin{frame}
 	\frametitle{Experimental Results}
-	\textit{State results}
+	On MNIST dataset:
+	\begin{table}
+		\begin{tabular}{|l|c|c|c|c|c|}
+			\hline
+			 & \texttt{basic} & \texttt{rand} & \texttt{rot} & \texttt{img} & \texttt{img+rot} \\
+			\hline
+			SVM$_{rbf}$ & 3.03\% & 14.58\% & \textbf{11.11\%} & 22.61\% & 55.18\% \\
+			NN-1 & 4.69\% & 20.04\% & 18.11\% & 27.41\% & 62.16\% \\
+			CNN-1 (ReLU) & 3.37\% & 9.83\% & 18.84\% & 14.23\% & 45.96\% \\
+			CCNN-1 & \textbf{2.38\%} & \textbf{7.45\%} & 13.39\% & \textbf{10.40\%} & \textbf{42.28\%} \\
+			\hline
+			TIRBM & - & - & \textbf{4.20\%} & - & 35.50\% \\
+			SDAE-3 & 2.84\% & 10.30\% & 9.53\% & 16.68\% & 43.76\% \\
+			ScatNet-2 & 1.27\% & 12.30\% & 7.48\% & 18.40\% & 50.48\% \\
+			PCANet-2 & \textbf{1.06\%} & 6.19\% & 7.37\% & 10.95\% & 35.48\% \\
+			CNN-2 (ReLU) & 2.11\% & 5.64\% & 8.27\% & 10.17\% & 32.42\% \\
+			CNN-2 (Quad) & 1.75\% & 5.30\% & 8.83\% & 11.60\% & 36.90\% \\
+			CCNN-2 & 1.38\% & \textbf{4.32\%} & 6.98\% & \textbf{7.46\%} & \textbf{30.23\%} \\
+			\hline
+		\end{tabular}
+		\caption{Classification error with a Gaussian kernel for CCNNs}
+		\label{tab:mnist-results}
+	\end{table}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Experimental Results}
+	On CIFAR-10 dataset:
+	\begin{table}
+		\begin{tabular}{|l|c|}
+			\hline
+			 & Error Rate \\
+			\hline
+			CNN-1 & 34.14\% \\
+			CCNN-1 & \textbf{23.62\%} \\
+			\hline
+			CNN-2 & 24.98\% \\
+			CCNN-2 & \textbf{20.52\%} \\
+			\hline
+			SVM$_{Fastfood}$ & 36.90\% \\
+			PCANet-2 & 22.86\% \\
+			CKN & 21.70\% \\
+			CNN-3 & 21.48\% \\
+			CCNN-3 & \textbf{19.56\%} \\
+			\hline
+		\end{tabular}
+		\caption{Error rate with a Gaussian kernel for CCNNs}
+		\label{tab:cifar-10-results}
+	\end{table}
 \end{frame}
 
 %------------------------------------------------
