@@ -6,6 +6,7 @@
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{amsmath,amssymb,amsthm}
 
 \newcommand{\set}[1]{\mathbb{#1}}
 \newcommand{\trace}[1]{\mathrm{tr}\left(#1\right)}
@@ -142,7 +143,17 @@
 
 \begin{frame}
 	\frametitle{Framing Problem Using RKHS}
-	\textit{Framing problem using RKHS}
+	\begin{itemize}
+		\item Representer Theorem implies that for any patch $z_p(x_i)$
+		\begin{align*}
+			h(z_p(x_i))=\sum\limits_{(i',p')\in[n]\times[p]} c_{i',p'}k(z_p(x_i),z_{p'}(x_{i'}))
+		\end{align*}
+		\item choose kernel matrix $K=\mathbb{R}^{nP\times nP}$
+		\item consider $K=QQ^{\top}$
+		\begin{align*}
+			h(z_p(x_i))=\langle Q_{(i,p)},w \rangle \text{ where } w:=\sum\limits_{(i',p')} c_{(i',p')}Q_{(i',p')}
+		\end{align*}
+	\end{itemize}
 \end{frame}
 
 \section{Algorithm}
@@ -167,18 +178,77 @@
 
 \begin{frame}
 	\frametitle{Solving ERM in CCNN Algorithm}
-	\textit{Details on solving minimization problem embedded in algorithm}
+	\begin{itemize}
+		\item projected gradient descent
+		\begin{align*}
+			A^{t+1}=\Pi_R(A^t-\eta^t\nabla_A\tilde{\mathcal{L}}(A^t))
+		\end{align*}
+		\item compute SVD of $A$, the project singular values onto $l_1$ ball (Duchi et al)
+		\item proximal adaptive gradient method
+		\item proximal SVRG
+	\end{itemize}
+	What is the per iteration complexity?
+	\begin{itemize}
+		\item
+		\item
+	\end{itemize}
 \end{frame}
 
 \section{Theoretical Results}
 \begin{frame}
-	\frametitle{Bounds on Generalization Error}
-	\textit{Theorem 1}
+	\frametitle{Choice of Kernel}
+	\begin{itemize}
+		\item kernel functions considered must satisfy notion of richness
+		\begin{align*}
+			&\mathcal{K}(z,z')=\frac{1}{2-\langle z,z' \rangle}, \hspace{4mm} ||z||_2\leq 1, ||z'||_2\leq 1 \\
+			&\mathcal{K}(z,z')=exp(-\gamma||z-z'||_2^2), \hspace{4mm} |z||_2=||z'||_2 =1, \gamma\geq0
+		\end{align*}
+	\end{itemize}
+\end{frame}
+\begin{frame}
+	\frametitle{Valid Activation Functions}
+	\begin{itemize}
+		\item arbitrary polynomial functions
+		\item $\sigma(t)=\sin(t)$
+		\item $\sigma_{erf}(t)=\frac{2}{\sqrt{pi}}\int_{0}^{t}e^{-z^2}dz$
+		\item $\sigma_{sh}(t)=\frac{1}{2}\int_{-\infty}^{t}(\sigma_{erf}(z)+1)dz$
+	\end{itemize}
+	\begin{figure}
+		\includegraphics[scale=0.4]{Valid-Activation.png}
+		\caption{approximations to activations which are not smooth enough}
+		\label{fig:valid-activation}
+	\end{figure}
+\end{frame}
+\begin{frame}
+	\frametitle{Bound on Generalization Error}
+		\begin{itemize}
+			\item loss function $\mathcal{L}(;y)$ is L-Lipschitz continuous for every $y \in [d_2]$
+			\item $\mathcal{K}$ is the inverse polynomial kernel or the Gaussian RBF kernel
+			\item valid activation function $\sigma$
+			\item $c>0$
+			\item radius $R:=C_\sigma(B_1)B_2r$
+		\end{itemize}
+	\begin{align*}
+		&\exists C_\sigma(B_1) \text{ such that } \\
+		&\mathbb{E}_{X,Y}[\mathcal{L}(\hat{f}_{ccnn}(X);Y)]\leq \\ 
+		&\inf\limits_{f\in \mathcal{F}_{cnn}} \mathbb{E}_{X,Y}[\mathcal{L}(f(X);Y)]+ \frac{cLC_{\sigma}(B_1)B_2 r\sqrt{log(nP)\mathbb{E}_X[||K(X)||_2]}}{\sqrt{n}}
+	\end{align*}	
 \end{frame}
 
 \begin{frame}
-	\frametitle{Proof of Theorem 1}
-	\textit{Proof of theorem 1}
+	\frametitle{Proof Sketch of Theorem 1}
+	\begin{enumerate}
+		\item consider a relaxed function class
+		\begin{align*}
+			\mathcal{F}_{ccnn}:=\Big\{x\mapsto \sum_{j = 1}^{r^*} \sum_{p = 1}^P \alpha_{j, p} h_j(z_p(x)) : r^*<\infty \\ 
+			\text{ and } \sum_{j = 1}^{r^*} ||\alpha_j||_2||h_j||_{\mathcal{H}}\leq C_{\sigma}(B_1)B_2d_2 \Big\}
+		\end{align*}
+		\item characterize Rademacher complexity of $\mathcal{F}_{ccnn}$ to upper bound generalization error of $\hat{f}_{ccnn}$
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Further Proof Details}
 \end{frame}
 
 \section{Experimental Results}
