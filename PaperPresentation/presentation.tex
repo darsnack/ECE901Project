@@ -137,14 +137,32 @@
 
 \subsection{Non-Linear Activation Functions}
 \begin{frame}
-	\frametitle{Reproducing-Kernel Hilbert Space (RKHS)}
-	\textit{Background on RKHS and representer theorem}
+	\frametitle{Reproducing Kernel Hilbert Space (RKHS)}
+	\begin{itemize}
+		\item 	Hilbert Space: a complete inner-product space
+		\item 	a reproducing kernel Hilbert space is
+		\begin{itemize}
+			\item a Hilbert space of functions $f: \mathcal{X}\rightarrow \mathbb{R}$
+			\item evaluation functionals are continuous
+		\end{itemize}
+	\item reproducing kernel (associated with Hilbert Space $\mathcal{H}$): a function $\mathcal{K}: \mathcal{X}\times\mathcal{X}\rightarrow\mathbb{R}$ such that
+	\begin{itemize}
+		\item $\mathcal{K}(x,\cdot)=\mathcal{K}_x(\cdot)\in\mathcal{H}, \forall x\in \mathcal{X}$
+		\item $\langle f,\mathcal{K}_x \rangle_{\mathcal{H}} = f(x), \forall f\in\mathcal{H}$ (reproducing property)
+	\end{itemize}
+	\item
+	\begin{itemize}
+		\item $\mathcal{H}$ is an RKHS $\implies$ $\exists$ unique reproducing kernel $\mathcal{K}$
+		\item If $\exists$ reproducing kernel $\mathcal{K}$ $\implies$ $\mathcal{H}$ is an RKHS 
+	\end{itemize}
+	\end{itemize}
 \end{frame}
+
 
 \begin{frame}
 	\frametitle{Framing Problem Using RKHS}
 	\begin{itemize}
-		\item Representer Theorem implies that for any patch $z_p(x_i)$
+		\item for certain kernels $\mathcal{K}$ and activations $\sigma$, Representer Theorem implies that for any patch $z_p(x_i)$
 		\begin{align*}
 			h(z_p(x_i))=\sum\limits_{(i',p')\in[n]\times[p]} c_{i',p'}k(z_p(x_i),z_{p'}(x_{i'}))
 		\end{align*}
@@ -187,11 +205,6 @@
 		\item proximal adaptive gradient method
 		\item proximal SVRG
 	\end{itemize}
-	What is the per iteration complexity?
-	\begin{itemize}
-		\item
-		\item
-	\end{itemize}
 \end{frame}
 
 \section{Theoretical Results}
@@ -220,7 +233,7 @@
 	\end{figure}
 \end{frame}
 \begin{frame}
-	\frametitle{Bound on Generalization Error}
+	\frametitle{Theorem 1: Bound on Generalization Error}
 		\begin{itemize}
 			\item loss function $\mathcal{L}(;y)$ is L-Lipschitz continuous for every $y \in [d_2]$
 			\item $\mathcal{K}$ is the inverse polynomial kernel or the Gaussian RBF kernel
@@ -236,7 +249,7 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{Proof Sketch of Theorem 1}
+	\frametitle{Proof Sketch}
 	\begin{enumerate}
 		\item consider a relaxed function class
 		\begin{align*}
@@ -248,7 +261,51 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{Further Proof Details}
+	\frametitle{Further Proof Details (1/4)}
+	Lemma 1:
+	\begin{align*}
+		\text{For any valid } \sigma(\cdot), \text{ } \exists C_{\sigma}(B_1) \text{ s.t. } \mathcal{F}_{cnn}\subset\mathcal{F}_{ccnn}
+	\end{align*}
+	Lemma 4:
+	\begin{align*}
+		&\text{With CCNN hyper-parameter } R=C_\sigma(B_1)B_2d_2, \\
+		&\hat{f}_{ccnn} \text{ is guaranteed to satisfy } \hat{f}_{ccnn} \in \arg\min\limits_{f\in\mathcal{F}_{ccnn}} \sum\limits_{i=1}^{n} \mathcal{L}(f(x_i);y_i)
+	\end{align*}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Further Proof Details (2/4)}
+	the Rademacher complexity of $\mathcal{F}=\{f:\mathcal{X}\rightarrow \mathbb{R}\}$ with respect to $n$ i.i.d. samples $\{X_i\}_{i=1}^n$ is given by
+	\begin{align*}
+	\mathcal{R}_n(\mathcal{F}):=\mathbb{E}_{X,\epsilon} \bigg[\sup\limits_{f\in\mathcal{F}} \frac{1}{n}\sum\limits_{i=1}^n \epsilon_i f(X_i)\bigg]
+	\end{align*}
+	where $\{\epsilon_i\}_{i=1}^n$ are an i.i.d. sequence of uniform $\{-1,+1\}$-valued random variables
+\end{frame}
+
+\begin{frame}
+	\frametitle{Further Proof Details (3/4)}
+	Lemma 5: \\
+	$\exists$ universal constant $c$ such that 
+	\begin{align*}
+		\mathcal{R}_n(\mathcal{F}_{ccnn})\leq \frac{cC_{\sigma}(B_1)B_2r\sqrt{log(nP)\mathbb{E}[||K(X)||_2]}}{\sqrt{n}}
+	\end{align*}
+	generalization bound:
+	\begin{align*}
+		\mathbb{E}[\mathcal{L}(\mathcal{F}_{ccnn}(X);Y)]\leq \inf\limits_{f\in \mathcal{F}_{ccnn}} \mathbb{E}[\mathcal{L}(f(x);y)]+2L\mathcal{R}_n(\mathcal{F}_{ccnn})+\frac{c}{\sqrt{n}}
+	\end{align*}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Further Proof Details (4/4)}
+	By Lemma 3,
+	\begin{align*}
+	\inf\limits_{f\in \mathcal{F}_{ccnn}} \mathbb{E}[\mathcal{L}(f(x);y)] \leq \inf\limits_{f\in \mathcal{F}_{cnn}} \mathbb{E}[\mathcal{L}(f(x);y)]
+	\end{align*}
+	It follows that
+	\begin{align*}
+	\mathbb{E}_{X,Y}[\mathcal{L}(\hat{f}_{ccnn}(X);Y)]\leq 
+	&\inf\limits_{f\in \mathcal{F}_{cnn}} \mathbb{E}_{X,Y}[\mathcal{L}(f(X);Y)]+ \\ &\frac{cLC_{\sigma}(B_1)B_2 r\sqrt{log(nP)\mathbb{E}_X[||K(X)||_2]}}{\sqrt{n}}
+	\end{align*}
 \end{frame}
 
 \section{Experimental Results}
