@@ -381,3 +381,7 @@ Hardware/VGGNet-16/*
 !*.elf
 !*.bmm
 !*.xmp
+########
+# Sims
+########
+*/behav/*
