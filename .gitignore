@@ -384,4 +384,4 @@ Hardware/VGGNet-16/*
 ########
 # Sims
 ########
-*/behav/
+Hardware/**/behav/
