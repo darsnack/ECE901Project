@@ -2,12 +2,12 @@
 module stochastic_quantizer_tb;
 
 parameter WL = 16;
-parameter FL = 15;
+parameter FL = 14;
 
 reg CLK;
 reg RESET;
-reg [(2*WL - 1):0] in;
-wire [(WL - 1):0] out;
+reg signed [(2*WL - 1):0] in;
+wire signed [(WL - 1):0] out;
 
 stochastic_quantizer #(.WL(WL), .FL(FL)) dut(
     .CLK(CLK),
@@ -30,6 +30,14 @@ initial begin
     #(WL*10)
         
     $display("Initialization period over");
+    
+    #(30*10)
+    
+    in = in | (1'b1 << (2*FL + 1));
+    
+    #(30*10)
+    
+    in = ~in + 1'b1;
     
     #(30*10)
     
