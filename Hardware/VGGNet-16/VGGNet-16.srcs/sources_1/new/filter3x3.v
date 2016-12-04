@@ -41,6 +41,8 @@ wire signed [(2*WL - 1):0] activation_input;
 wire signed [(WL - 1):0] activation_input_q;
 wire signed [(WL - 1):0] sigma_out, sigma_prime_out;
 wire signed [(2*WL - 1):0] grad_update;
+wire signed [(2*WL - 1):0] bias_update;
+wire signed [(WL - 1):0] bias_update_q;
 wire signed [(2*WL - 1):0] prop_error;
 wire signed [(WL - 1):0] prop_error_q;
 wire overflow;
@@ -98,7 +100,7 @@ always @(CurrentState, weight_updates_q, in1) begin
         for (i = 0; i < PATCH_LENGTH; i = i + 1) begin
             weights[i] <= weight_updates_q[i];
         end
-        bias <= in1[4]; // Center of 3x3 filter
+        bias <= bias_update_q; // Center of 3x3 filter
     end
     else begin
         for (i = 0; i < PATCH_LENGTH; i = i + 1) begin
@@ -197,6 +199,7 @@ always @(mode, prop_error_q, sigma_out, sigma_prime_out) begin
 end
 
 assign grad_update = $signed(LEARNING_RATE) * prod_sum_q;
+assign bias_update = $signed(LEARNING_RATE) * in1[4];
 
 always @(grad_update) begin
     for (i = 0; i < PATCH_LENGTH; i = i + 1) begin
@@ -265,6 +268,14 @@ stochastic_quantizer #(.WL(WL), .FL(FL)) weight8_quantizer(
     .RESET(RESET),
     .in(weight_updates[8]),
     .out(weight_updates_q[8]),
+    .overflow()
+);
+
+stochastic_quantizer #(.WL(WL), .FL(FL)) bias_quantizer(
+    .CLK(CLK),
+    .RESET(RESET),
+    .in(bias_update),
+    .out(bias_update_q),
     .overflow()
 );
 
