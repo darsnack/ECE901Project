@@ -11,13 +11,15 @@ parameter FF_MODE = 0, FB_MODE = 1, GR_MODE = 2;
 integer i;
 
 reg CLK, RESET, Start;
-reg [(WL - 1):0] in1, in2, in3, in4, in5, in6, in7, in8, in9;
-wire [(WL - 1):0] out1, out2, out3, out4, out5, out6, out7, out8, out9, out10;
+reg signed [(WL - 1):0] in1, in2, in3, in4, in5, in6, in7, in8, in9;
+reg signed [(WL - 1):0] label1, label2, label3, label4, label5, label6, label7, label8, label9, label10;
+wire signed [(WL - 1):0] out1, out2, out3, out4, out5, out6, out7, out8, out9, out10;
 wire Done;
 
 top_cnn #(.KERNEL_SIZE(KERNEL_SIZE), .LEARNING_RATE(LEARNING_RATE), .WL(WL), .FL(FL)) dut(
     CLK, RESET, Start, Done, 
     in1, in2, in3, in4, in5, in6, in7, in8, in9, 
+    label1, label2, label3, label4, label5, label6, label7, label8, label9, label10,
     out1, out2, out3, out4, out5, out6, out7, out8, out9, out10
 );
 
@@ -35,6 +37,16 @@ initial begin
     in7 = (1 << (FL - 2));
     in8 = (1 << (FL - 2));
     in9 = (1 << (FL - 2));
+    label1 = (1 << (FL - 2));
+    label2 = (1 << (FL - 2));
+    label3 = (1 << (FL - 2));
+    label4 = (1 << (FL - 2));
+    label5 = (1 << (FL - 2));
+    label6 = (1 << (FL - 2));
+    label7 = (1 << (FL - 2));
+    label8 = (1 << (FL - 2));
+    label9 = (1 << (FL - 2));
+    label10 = (1 << (FL - 2));
     
     #15
     
@@ -49,6 +61,12 @@ initial begin
     #(2*16*16*10 + 10)
     
     #(3*16*4*10 + 10)
+        
+    #20
+    
+    #(3*16*4*10*10 + 10)
+    
+    #(2*16*4*10 + 20)
         
     #10
     
