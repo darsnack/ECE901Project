@@ -42,7 +42,9 @@ parameter STATE_L3_DATA = 8, STATE_L3_ACC = 9, STATE_L3_OUTPUT = 10;
 parameter STATE_ERROR = 11;
 parameter STATE_L3_ERR_DATA = 12, STATE_L3_ERR_ACC = 13, STATE_L3_ERR_INCR = 14;
 parameter STATE_L3_GR_DATA = 15, STATE_L3_GR_UPDATE = 16;
-parameter STATE_FINAL_OUTPUT = 17;
+parameter STATE_L1_ERR_DATA = 17, STATE_L1_ERR_OUTPUT = 18;
+parameter STATE_L1_GR_START = 19, STATE_L1_GR_DATA = 20, STATE_L1_GR_COMPUTE = 21, STATE_L1_GR_UPDATE = 22;
+parameter STATE_FINAL_OUTPUT = 23;
  
 input CLK, RESET, Start;
 input signed [(WL - 1):0] in1, in2, in3, in4, in5, in6, in7, in8, in9;
@@ -109,6 +111,16 @@ wire signed [(WL - 1):0] layer_3_gr_update_patch [0:(LAYER_2_WIDTH * LAYER_3_DEP
 reg [(DIM_BITS - 1):0] layer_3_gr_index;
 reg [(DIM_BITS - 1):0] layer_3_gr_next_index;
 
+reg signed [(WL - 1):0] layer_1_error [0:(LAYER_1_VOLUME - 1)];
+wire signed [(WL - 1):0] layer_1_err_sum [0:(LAYER_1_DEPTH - 1)];
+reg [(DIM_BITS - 1):0] layer_2_err_row, layer_2_err_col;
+reg [(DIM_BITS - 1):0] layer_2_err_next_row, layer_2_err_next_col;
+reg [(MAP_BITS - 1):0] layer_1_err_next_map;
+
+reg [(DIM_BITS - 1):0] layer_1_gr_row, layer_1_gr_col;
+reg [(DIM_BITS - 1):0] layer_1_gr_next_row, layer_1_gr_next_col;
+reg [(MAP_BITS - 1):0] layer_1_gr_next_map;
+
 always @(posedge CLK) begin
     if (RESET == 1'b0) CurrentState <= STATE_RESET;
     else CurrentState <= NextState;
@@ -153,7 +165,25 @@ always @(CurrentState, Start) begin
     STATE_L3_GR_DATA: NextState <= STATE_L3_GR_UPDATE;
     STATE_L3_GR_UPDATE: begin
         if (layer_3_gr_index < (LAYER_2_HEIGHT * LAYER_2_DEPTH - 1)) NextState <= STATE_L3_GR_DATA;
-        else NextState <= STATE_FINAL_OUTPUT;
+        else NextState <= STATE_L1_ERR_DATA;
+    end
+    STATE_L1_ERR_DATA: NextState <= STATE_L1_ERR_OUTPUT;
+    STATE_L1_ERR_OUTPUT: begin
+        if ((layer_1_map >= (INPUT_DEPTH - 1)) && (layer_2_err_row >= (LAYER_2_HEIGHT - 1)) && (layer_2_err_col >= (LAYER_2_WIDTH - 1)))
+            NextState <= STATE_L1_GR_START;
+        else NextState <= STATE_L1_ERR_DATA;
+    end
+    STATE_L1_GR_START: NextState <= STATE_L1_GR_DATA;
+    STATE_L1_GR_DATA: NextState <= STATE_L1_GR_COMPUTE;
+    STATE_L1_GR_COMPUTE: begin
+        if ((layer_1_gr_row <= 1) && (layer_1_gr_col <= 1))
+            NextState <= STATE_L1_GR_UPDATE;
+        else NextState <= STATE_L1_GR_DATA;
+    end
+    STATE_L1_GR_UPDATE: begin
+        if ((layer_1_map >= (INPUT_DEPTH - 1)) && (layer_1_gr_row <= 1) && (layer_1_gr_col <= 1))
+                NextState <= STATE_FINAL_OUTPUT;
+        else NextState <= STATE_L1_GR_START;
     end
     STATE_FINAL_OUTPUT: begin
         if (Start == 1'b0) NextState <= STATE_WAIT;
@@ -199,11 +229,27 @@ always @(CurrentState) begin
             der_layer_2[i] <= 0;
         end
 
-        layer_1_corner <= 0;
-        layer_2_row <= 0;
-        layer_2_col <= 0;
-        layer_2_next_row <= 0;
-        layer_2_next_col <= 0;
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= 0;
+        end
+
+        layer_1_depth_counter <= 0;
+        layer_1_map <= 0;
+        layer_1_next_map <= 0;
+        layer_1_mode <= 0;
+        layer_1_acc <= 0;
+        layer_1_index <= 0;
+        layer_1_next_index <= 0;
+        layer_1_err_next_map <= 0;
+        layer_2_err_row <= 0;
+        layer_2_err_col <= 0;
+        layer_2_err_next_row <= 0;
+        layer_2_err_next_col <= 0;
+        layer_1_gr_next_map <= 0;
+        layer_1_gr_row <= LAYER_1_HEIGHT - 2;
+        layer_1_gr_col <= LAYER_1_WIDTH - 2;
+        layer_1_gr_next_row <= LAYER_1_HEIGHT - 2;
+        layer_1_gr_next_col <= LAYER_1_WIDTH - 2;
 
         for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
             for (j = 0; j < LAYER_2_WIDTH; j = j + 1) begin
@@ -273,6 +319,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= 0;
         layer_1_map <= 0;
         layer_1_next_map <= 0;
@@ -280,6 +330,16 @@ always @(CurrentState) begin
         layer_1_acc <= 0;
         layer_1_index <= 0;
         layer_1_next_index <= 0;
+        layer_1_err_next_map <= 0;
+        layer_2_err_row <= 0;
+        layer_2_err_col <= 0;
+        layer_2_err_next_row <= 0;
+        layer_2_err_next_col <= 0;
+        layer_1_gr_next_map <= 0;
+        layer_1_gr_row <= LAYER_1_HEIGHT - 2;
+        layer_1_gr_col <= LAYER_1_WIDTH - 2;
+        layer_1_gr_next_row <= LAYER_1_HEIGHT - 2;
+        layer_1_gr_next_col <= LAYER_1_WIDTH - 2;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -382,6 +442,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= 0;
         layer_1_map <= 0;
         layer_1_next_map <= 0;
@@ -389,6 +453,16 @@ always @(CurrentState) begin
         layer_1_acc <= 1;
         layer_1_index <= layer_1_next_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -491,12 +565,26 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter + 1;
         layer_1_map <= layer_1_next_map;
         layer_1_mode <= FF_MODE;
         layer_1_acc <= 1;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -585,6 +673,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter;
         layer_1_map <= layer_1_map;
         layer_1_next_map <= layer_1_map + 1;
@@ -592,6 +684,16 @@ always @(CurrentState) begin
         layer_1_acc <= (layer_1_depth_counter < (LAYER_1_DEPTH - 1)) ? 1 : 0;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -680,6 +782,10 @@ always @(CurrentState) begin
             der_layer_1[layer_1_index + i * (LAYER_1_WIDTH * LAYER_1_HEIGHT)] <= out2_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter;
         layer_1_map <= layer_1_map;
         layer_1_next_map <= layer_1_next_map;
@@ -687,6 +793,16 @@ always @(CurrentState) begin
         layer_1_acc <= 0;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index + 1;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -775,6 +891,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter;
         layer_1_map <= layer_1_map;
         layer_1_next_map <= layer_1_next_map;
@@ -782,6 +902,16 @@ always @(CurrentState) begin
         layer_1_acc <= layer_1_acc;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             in_layer_2[i * POOL_LENGTH + 0] <= out_layer_1[i * (LAYER_1_WIDTH * LAYER_1_HEIGHT) + layer_1_corner + 0];
@@ -871,6 +1001,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter;
         layer_1_map <= layer_1_map;
         layer_1_next_map <= layer_1_next_map;
@@ -878,6 +1012,16 @@ always @(CurrentState) begin
         layer_1_acc <= layer_1_acc;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -966,6 +1110,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter;
         layer_1_map <= layer_1_map;
         layer_1_next_map <= layer_1_next_map;
@@ -973,6 +1121,16 @@ always @(CurrentState) begin
         layer_1_acc <= layer_1_acc;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -1061,6 +1219,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter;
         layer_1_map <= layer_1_map;
         layer_1_next_map <= layer_1_next_map;
@@ -1068,6 +1230,16 @@ always @(CurrentState) begin
         layer_1_acc <= layer_1_acc;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -1156,6 +1328,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter;
         layer_1_map <= layer_1_map;
         layer_1_next_map <= layer_1_next_map;
@@ -1163,6 +1339,16 @@ always @(CurrentState) begin
         layer_1_acc <= layer_1_acc;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -1251,6 +1437,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter;
         layer_1_map <= layer_1_map;
         layer_1_next_map <= layer_1_next_map;
@@ -1258,6 +1448,16 @@ always @(CurrentState) begin
         layer_1_acc <= layer_1_acc;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -1346,6 +1546,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter;
         layer_1_map <= layer_1_map;
         layer_1_next_map <= layer_1_next_map;
@@ -1353,6 +1557,16 @@ always @(CurrentState) begin
         layer_1_acc <= layer_1_acc;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -1441,6 +1655,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter;
         layer_1_map <= layer_1_map;
         layer_1_next_map <= layer_1_next_map;
@@ -1448,6 +1666,16 @@ always @(CurrentState) begin
         layer_1_acc <= layer_1_acc;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -1533,6 +1761,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter;
         layer_1_map <= layer_1_map;
         layer_1_next_map <= layer_1_next_map;
@@ -1540,6 +1772,16 @@ always @(CurrentState) begin
         layer_1_acc <= layer_1_acc;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -1628,6 +1870,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter;
         layer_1_map <= layer_1_map;
         layer_1_next_map <= layer_1_next_map;
@@ -1635,6 +1881,16 @@ always @(CurrentState) begin
         layer_1_acc <= layer_1_acc;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -1723,6 +1979,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter;
         layer_1_map <= layer_1_map;
         layer_1_next_map <= layer_1_next_map;
@@ -1730,6 +1990,16 @@ always @(CurrentState) begin
         layer_1_acc <= layer_1_acc;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -1798,6 +2068,699 @@ always @(CurrentState) begin
         
         Done <= 0;
     end
+    STATE_L1_ERR_DATA: begin
+        for (i = 0; i < LAYER_1_DEPTH; i = i + 1) begin
+            in1_layer_1[i * PATCH_LENGTH + 0] <= ((layer_2_err_row == 0) || (layer_2_err_col == 0)) ? 0
+                : layer_3_error[i * PATCH_LENGTH + (layer_2_err_row - 1) * LAYER_2_WIDTH + (layer_2_err_col - 1)];
+            in1_layer_1[i * PATCH_LENGTH + 1] <= (layer_2_err_row == 0) ? 0
+                : layer_3_error[i * PATCH_LENGTH + (layer_2_err_row - 1) * LAYER_2_WIDTH + layer_2_err_col];
+            in1_layer_1[i * PATCH_LENGTH + 2] <= ((layer_2_err_row == 0) || (layer_2_err_col == (LAYER_2_WIDTH - 1))) ? 0
+                : layer_3_error[i * PATCH_LENGTH + (layer_2_err_row - 1) * LAYER_2_WIDTH + (layer_2_err_col + 1)];
+            in1_layer_1[i * PATCH_LENGTH + 3] <= (layer_2_err_col == 0) ? 0
+                : layer_3_error[i * PATCH_LENGTH + layer_2_err_row * LAYER_2_WIDTH + (layer_2_err_col - 1)];
+            in1_layer_1[i * PATCH_LENGTH + 4] <= layer_3_error[i * PATCH_LENGTH + layer_2_err_row * LAYER_2_WIDTH + layer_2_err_col];
+            in1_layer_1[i * PATCH_LENGTH + 5] <= (layer_2_err_col == (LAYER_2_WIDTH - 1)) ? 0
+                : layer_3_error[i * PATCH_LENGTH + layer_2_err_row * LAYER_2_WIDTH + (layer_2_err_col + 1)];
+            in1_layer_1[i * PATCH_LENGTH + 6] <= ((layer_2_err_row == (LAYER_2_HEIGHT - 1)) || (layer_2_err_col == 0)) ? 0
+                : layer_3_error[i * PATCH_LENGTH + (layer_2_err_row + 1) * LAYER_2_WIDTH + (layer_2_err_col - 1)];
+            in1_layer_1[i * PATCH_LENGTH + 7] <= (layer_2_err_row == (LAYER_2_HEIGHT - 1)) ? 0
+                : layer_3_error[i * PATCH_LENGTH + (layer_2_err_row + 1) * LAYER_2_WIDTH + layer_2_err_col];
+            in1_layer_1[i * PATCH_LENGTH + 8] <= ((layer_2_err_row == (LAYER_2_HEIGHT - 1)) || (layer_2_err_col == (LAYER_2_WIDTH - 1))) ? 0
+                : layer_3_error[i * PATCH_LENGTH + (layer_2_err_row + 1) * LAYER_2_WIDTH + (layer_2_err_col + 1)];
+
+            for (j = 0; j < PATCH_LENGTH; j = j + 1) begin
+                in2_layer_1[i * PATCH_LENGTH + j] <= in2_layer_1[i * PATCH_LENGTH + j];
+            end
+        end
+
+        for (i = 0; i < LAYER_1_DEPTH; i = i + 1) begin
+            act_der_layer_1[i] <= der_layer_2[i * (LAYER_2_WIDTH * LAYER_2_HEIGHT) + layer_2_err_row * LAYER_2_WIDTH + layer_2_err_col];
+        end
+
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            out_layer_1[i] <= out_layer_1[i];
+            der_layer_1[i] <= der_layer_1[i];
+        end
+
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
+        layer_1_depth_counter <= layer_1_depth_counter;
+        layer_1_map <= layer_1_err_next_map;
+        layer_1_next_map <= layer_1_next_map;
+        layer_1_mode <= FB_MODE;
+        layer_1_acc <= layer_1_acc;
+        layer_1_index <= layer_1_index;
+        layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_next_row;
+        layer_2_err_col <= layer_2_err_next_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
+
+        for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
+            for (j = 0; j < POOL_LENGTH; j = j + 1) begin
+                in_layer_2[i * POOL_LENGTH + j] <= in_layer_2[i * POOL_LENGTH + j];
+            end
+        end
+
+        for (i = 0; i < LAYER_2_VOLUME; i = i + 1) begin
+            out_layer_2[i] <= out_layer_2[i];
+            der_layer_2[i] <= der_layer_2[i];
+        end
+
+        layer_1_corner <= layer_1_corner;
+        layer_2_row <= layer_2_row;
+        layer_2_col <= layer_2_col;
+        layer_2_next_row <= layer_2_next_row;
+        layer_2_next_col <= layer_2_next_col;
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            for (j = 0; j < LAYER_2_WIDTH; j = j + 1) begin
+                in1_layer_3[i * LAYER_2_WIDTH + j] <= in1_layer_3[i * LAYER_2_WIDTH + j];
+                in2_layer_3[i * LAYER_2_WIDTH + j] <= in2_layer_3[i * LAYER_2_WIDTH + j];
+            end
+
+            acc_in1_layer_3[i] <= acc_in1_layer_3[i];
+            acc_in2_layer_3[i] <= acc_in2_layer_3[i];
+
+            out_layer_3[i] <= out_layer_3[i];
+        end
+
+        layer_3_index <= layer_3_index;
+        layer_3_next_index <= layer_3_next_index;
+
+        for (i = 0; i < (LAYER_2_VOLUME * LAYER_3_DEPTH); i = i + 1) begin
+            layer_3_weights[i] <= layer_3_weights[i];
+        end
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            output_error[i] <= output_error[i];
+        end
+
+        for (i = 0; i < LAYER_2_WIDTH; i = i + 1) begin
+            layer_3_der_patch[i] <= layer_3_der_patch[i];
+            layer_3_err_weight_patch[i] <= layer_3_err_weight_patch[i];
+            layer_3_acc[i] <= layer_3_acc[i];
+        end
+
+        for (i = 0; i < LAYER_2_VOLUME; i = i + 1) begin
+            layer_3_error[i] <= layer_3_error[i];
+        end
+
+        layer_3_err_depth_counter <= layer_3_err_depth_counter;
+        layer_3_err_next_depth_counter <= layer_3_err_next_depth_counter;
+        layer_3_err_index <= layer_3_err_index;
+        layer_3_err_next_index <= layer_3_err_next_index;
+
+        for (i = 0; i < LAYER_2_WIDTH; i = i + 1) begin
+            layer_3_gr_in_patch[i] <= layer_3_gr_in_patch[i];
+        end
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            for (j = 0; j < LAYER_2_WIDTH; j = j + 1) begin
+                layer_3_weight_patch[i * LAYER_2_WIDTH + j] <= layer_3_weight_patch[i * LAYER_2_WIDTH + j];
+            end
+        end
+
+        layer_3_gr_index <= layer_3_gr_next_index;
+        layer_3_gr_next_index <= layer_3_gr_next_index;
+        
+        Done <= 0;
+    end
+    STATE_L1_ERR_OUTPUT: begin
+        for (i = 0; i < LAYER_1_DEPTH; i = i + 1) begin
+            for (j = 0; j < PATCH_LENGTH; j = j + 1) begin
+                in1_layer_1[i * PATCH_LENGTH + j] <= in1_layer_1[i * PATCH_LENGTH + j];
+                in2_layer_1[i * PATCH_LENGTH + j] <= in2_layer_1[i * PATCH_LENGTH + j];
+            end
+        end
+
+        for (i = 0; i < LAYER_1_DEPTH; i = i + 1) begin
+            act_der_layer_1[i] <= act_der_layer_1[i];
+        end
+
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            out_layer_1[i] <= out_layer_1[i];
+            der_layer_1[i] <= der_layer_1[i];
+        end
+
+        for (i = 0; i < LAYER_1_DEPTH; i = i + 1) begin
+            layer_1_error[i * (LAYER_2_WIDTH * LAYER_2_HEIGHT) + (2 * layer_2_err_row) * LAYER_1_WIDTH + layer_2_err_col * 2]
+                <= out1_layer_1[i];
+            layer_1_error[i * (LAYER_2_WIDTH * LAYER_2_HEIGHT) + (2 * layer_2_err_row + 1) * LAYER_1_WIDTH + layer_2_err_col * 2]
+                <= out1_layer_1[i];
+            layer_1_error[i * (LAYER_2_WIDTH * LAYER_2_HEIGHT) + (2 * layer_2_err_row) * LAYER_1_WIDTH + layer_2_err_col * 2 + 1]
+                <= out1_layer_1[i];
+            layer_1_error[i * (LAYER_2_WIDTH * LAYER_2_HEIGHT) + (2 * layer_2_err_row + 1) * LAYER_1_WIDTH + layer_2_err_col * 2 + 1]
+                <= out1_layer_1[i];
+        end
+
+        layer_1_depth_counter <= layer_1_depth_counter;
+        layer_1_map <= layer_1_map;
+        layer_1_next_map <= layer_1_next_map;
+        layer_1_mode <= FB_MODE;
+        layer_1_acc <= layer_1_acc;
+        layer_1_index <= layer_1_index;
+        layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= (layer_1_map == (INPUT_DEPTH - 1)) ? 0 : (layer_1_map + 1);
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= ((layer_1_map == (INPUT_DEPTH - 1)) && (layer_2_err_col == (LAYER_2_WIDTH - 1))) ? (layer_2_err_row + 1) 
+            : layer_2_err_next_row;
+        layer_2_err_next_col <= (layer_1_map == (INPUT_DEPTH - 1)) ? ((layer_2_err_col == (LAYER_2_WIDTH - 1)) ? 0 : (layer_2_err_col + 1)) : layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
+
+        for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
+            for (j = 0; j < POOL_LENGTH; j = j + 1) begin
+                in_layer_2[i * POOL_LENGTH + j] <= in_layer_2[i * POOL_LENGTH + j];
+            end
+        end
+
+        for (i = 0; i < LAYER_2_VOLUME; i = i + 1) begin
+            out_layer_2[i] <= out_layer_2[i];
+            der_layer_2[i] <= der_layer_2[i];
+        end
+
+        layer_1_corner <= layer_1_corner;
+        layer_2_row <= layer_2_row;
+        layer_2_col <= layer_2_col;
+        layer_2_next_row <= layer_2_next_row;
+        layer_2_next_col <= layer_2_next_col;
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            for (j = 0; j < LAYER_2_WIDTH; j = j + 1) begin
+                in1_layer_3[i * LAYER_2_WIDTH + j] <= in1_layer_3[i * LAYER_2_WIDTH + j];
+                in2_layer_3[i * LAYER_2_WIDTH + j] <= in2_layer_3[i * LAYER_2_WIDTH + j];
+            end
+
+            acc_in1_layer_3[i] <= acc_in1_layer_3[i];
+            acc_in2_layer_3[i] <= acc_in2_layer_3[i];
+
+            out_layer_3[i] <= out_layer_3[i];
+        end
+
+        layer_3_index <= layer_3_index;
+        layer_3_next_index <= layer_3_next_index;
+
+        for (i = 0; i < (LAYER_2_VOLUME * LAYER_3_DEPTH); i = i + 1) begin
+            layer_3_weights[i] <= layer_3_weights[i];
+        end
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            output_error[i] <= output_error[i];
+        end
+
+        for (i = 0; i < LAYER_2_WIDTH; i = i + 1) begin
+            layer_3_der_patch[i] <= layer_3_der_patch[i];
+            layer_3_err_weight_patch[i] <= layer_3_err_weight_patch[i];
+            layer_3_acc[i] <= layer_3_acc[i];
+        end
+
+        for (i = 0; i < LAYER_2_VOLUME; i = i + 1) begin
+            layer_3_error[i] <= layer_3_error[i];
+        end
+
+        layer_3_err_depth_counter <= layer_3_err_depth_counter;
+        layer_3_err_next_depth_counter <= layer_3_err_next_depth_counter;
+        layer_3_err_index <= layer_3_err_index;
+        layer_3_err_next_index <= layer_3_err_next_index;
+
+        for (i = 0; i < LAYER_2_WIDTH; i = i + 1) begin
+            layer_3_gr_in_patch[i] <= layer_3_gr_in_patch[i];
+        end
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            for (j = 0; j < LAYER_2_WIDTH; j = j + 1) begin
+                layer_3_weight_patch[i * LAYER_2_WIDTH + j] <= layer_3_weight_patch[i * LAYER_2_WIDTH + j];
+            end
+        end
+
+        layer_3_gr_index <= layer_3_gr_next_index;
+        layer_3_gr_next_index <= layer_3_gr_next_index;
+        
+        Done <= 0;
+    end
+    STATE_L1_GR_START: begin
+        for (i = 0; i < LAYER_1_DEPTH; i = i + 1) begin
+            for (j = 0; j < PATCH_LENGTH; j = j + 1) begin
+                in1_layer_1[i * PATCH_LENGTH + j] <= in1_layer_1[i * PATCH_LENGTH + j];
+                in2_layer_1[i * PATCH_LENGTH + j] <= in2_layer_1[i * PATCH_LENGTH + j];
+            end
+        end
+
+        for (i = 0; i < LAYER_1_DEPTH; i = i + 1) begin
+            act_der_layer_1[i] <= act_der_layer_1[i];
+        end
+
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            out_layer_1[i] <= out_layer_1[i];
+            der_layer_1[i] <= der_layer_1[i];
+        end
+
+        for (i = 0; i < (LAYER_2_WIDTH * LAYER_2_HEIGHT * INPUT_DEPTH); i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
+        layer_1_depth_counter <= layer_1_depth_counter;
+        layer_1_map <= layer_1_gr_next_map;
+        layer_1_next_map <= layer_1_next_map;
+        layer_1_mode <= GR_MODE;
+        layer_1_acc <= 1;
+        layer_1_index <= layer_1_index;
+        layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= LAYER_1_HEIGHT - 2;
+        layer_1_gr_col <= LAYER_1_WIDTH - 2;
+        layer_1_gr_next_row <= LAYER_1_HEIGHT - 2;
+        layer_1_gr_next_col <= LAYER_1_WIDTH - 2;
+
+        for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
+            for (j = 0; j < POOL_LENGTH; j = j + 1) begin
+                in_layer_2[i * POOL_LENGTH + j] <= in_layer_2[i * POOL_LENGTH + j];
+            end
+        end
+
+        for (i = 0; i < LAYER_2_VOLUME; i = i + 1) begin
+            out_layer_2[i] <= out_layer_2[i];
+            der_layer_2[i] <= der_layer_2[i];
+        end
+
+        layer_1_corner <= layer_1_corner;
+        layer_2_row <= layer_2_row;
+        layer_2_col <= layer_2_col;
+        layer_2_next_row <= layer_2_next_row;
+        layer_2_next_col <= layer_2_next_col;
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            for (j = 0; j < LAYER_2_WIDTH; j = j + 1) begin
+                in1_layer_3[i * LAYER_2_WIDTH + j] <= in1_layer_3[i * LAYER_2_WIDTH + j];
+                in2_layer_3[i * LAYER_2_WIDTH + j] <= in2_layer_3[i * LAYER_2_WIDTH + j];
+            end
+
+            acc_in1_layer_3[i] <= acc_in1_layer_3[i];
+            acc_in2_layer_3[i] <= acc_in2_layer_3[i];
+
+            out_layer_3[i] <= out_layer_3[i];
+        end
+
+        layer_3_index <= layer_3_index;
+        layer_3_next_index <= layer_3_next_index;
+
+        for (i = 0; i < (LAYER_2_VOLUME * LAYER_3_DEPTH); i = i + 1) begin
+            layer_3_weights[i] <= layer_3_weights[i];
+        end
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            output_error[i] <= output_error[i];
+        end
+
+        for (i = 0; i < LAYER_2_WIDTH; i = i + 1) begin
+            layer_3_der_patch[i] <= layer_3_der_patch[i];
+            layer_3_err_weight_patch[i] <= layer_3_err_weight_patch[i];
+            layer_3_acc[i] <= layer_3_acc[i];
+        end
+
+        for (i = 0; i < LAYER_2_VOLUME; i = i + 1) begin
+            layer_3_error[i] <= layer_3_error[i];
+        end
+
+        layer_3_err_depth_counter <= layer_3_err_depth_counter;
+        layer_3_err_next_depth_counter <= layer_3_err_next_depth_counter;
+        layer_3_err_index <= layer_3_err_index;
+        layer_3_err_next_index <= layer_3_err_next_index;
+
+        for (i = 0; i < LAYER_2_WIDTH; i = i + 1) begin
+            layer_3_gr_in_patch[i] <= layer_3_gr_in_patch[i];
+        end
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            for (j = 0; j < LAYER_2_WIDTH; j = j + 1) begin
+                layer_3_weight_patch[i * LAYER_2_WIDTH + j] <= layer_3_weight_patch[i * LAYER_2_WIDTH + j];
+            end
+        end
+
+        layer_3_gr_index <= layer_3_gr_next_index;
+        layer_3_gr_next_index <= layer_3_gr_next_index;
+        
+        Done <= 0;
+    end
+    STATE_L1_GR_DATA: begin
+        for (i = 0; i < LAYER_1_DEPTH; i = i + 1) begin
+            in1_layer_1[i * PATCH_LENGTH + 0] <= in1;
+            in1_layer_1[i * PATCH_LENGTH + 1] <= in2;
+            in1_layer_1[i * PATCH_LENGTH + 2] <= in3;
+            in1_layer_1[i * PATCH_LENGTH + 3] <= in4;
+            in1_layer_1[i * PATCH_LENGTH + 4] <= in5;
+            in1_layer_1[i * PATCH_LENGTH + 5] <= in6;
+            in1_layer_1[i * PATCH_LENGTH + 6] <= in7;
+            in1_layer_1[i * PATCH_LENGTH + 7] <= in8;
+            in1_layer_1[i * PATCH_LENGTH + 8] <= in9;
+            in2_layer_1[i * PATCH_LENGTH + 0] <= layer_1_error[i * (LAYER_1_WIDTH * LAYER_1_HEIGHT) + (layer_1_gr_row - 1) * LAYER_2_WIDTH + layer_1_gr_col - 1];
+            in2_layer_1[i * PATCH_LENGTH + 1] <= layer_1_error[i * (LAYER_1_WIDTH * LAYER_1_HEIGHT) + (layer_1_gr_row - 1) * LAYER_2_WIDTH + layer_1_gr_col];
+            in2_layer_1[i * PATCH_LENGTH + 2] <= layer_1_error[i * (LAYER_1_WIDTH * LAYER_1_HEIGHT) + (layer_1_gr_row - 1) * LAYER_2_WIDTH + layer_1_gr_col + 1];
+            in2_layer_1[i * PATCH_LENGTH + 3] <= layer_1_error[i * (LAYER_1_WIDTH * LAYER_1_HEIGHT) + layer_1_gr_row * LAYER_2_WIDTH + layer_1_gr_col - 1];
+            in2_layer_1[i * PATCH_LENGTH + 4] <= layer_1_error[i * (LAYER_1_WIDTH * LAYER_1_HEIGHT) + layer_1_gr_row * LAYER_2_WIDTH + layer_1_gr_col];
+            in2_layer_1[i * PATCH_LENGTH + 5] <= layer_1_error[i * (LAYER_1_WIDTH * LAYER_1_HEIGHT) + layer_1_gr_row * LAYER_2_WIDTH + layer_1_gr_col + 1];
+            in2_layer_1[i * PATCH_LENGTH + 6] <= layer_1_error[i * (LAYER_1_WIDTH * LAYER_1_HEIGHT) + (layer_1_gr_row + 1) * LAYER_2_WIDTH + layer_1_gr_col - 1];
+            in2_layer_1[i * PATCH_LENGTH + 7] <= layer_1_error[i * (LAYER_1_WIDTH * LAYER_1_HEIGHT) + (layer_1_gr_row + 1) * LAYER_2_WIDTH + layer_1_gr_col];
+            in2_layer_1[i * PATCH_LENGTH + 8] <= layer_1_error[i * (LAYER_1_WIDTH * LAYER_1_HEIGHT) + (layer_1_gr_row + 1) * LAYER_2_WIDTH + layer_1_gr_col + 1];
+        end
+
+        for (i = 0; i < LAYER_1_DEPTH; i = i + 1) begin
+            act_der_layer_1[i] <= act_der_layer_1[i];
+        end
+
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            out_layer_1[i] <= out_layer_1[i];
+            der_layer_1[i] <= der_layer_1[i];
+        end
+
+        for (i = 0; i < (LAYER_2_WIDTH * LAYER_2_HEIGHT * INPUT_DEPTH); i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
+        layer_1_depth_counter <= layer_1_depth_counter;
+        layer_1_map <= layer_1_map;
+        layer_1_next_map <= layer_1_next_map;
+        layer_1_mode <= GR_MODE;
+        layer_1_acc <= 1;
+        layer_1_index <= layer_1_index;
+        layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_next_row;
+        layer_1_gr_col <= layer_1_gr_next_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
+
+        for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
+            for (j = 0; j < POOL_LENGTH; j = j + 1) begin
+                in_layer_2[i * POOL_LENGTH + j] <= in_layer_2[i * POOL_LENGTH + j];
+            end
+        end
+
+        for (i = 0; i < LAYER_2_VOLUME; i = i + 1) begin
+            out_layer_2[i] <= out_layer_2[i];
+            der_layer_2[i] <= der_layer_2[i];
+        end
+
+        layer_1_corner <= layer_1_corner;
+        layer_2_row <= layer_2_row;
+        layer_2_col <= layer_2_col;
+        layer_2_next_row <= layer_2_next_row;
+        layer_2_next_col <= layer_2_next_col;
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            for (j = 0; j < LAYER_2_WIDTH; j = j + 1) begin
+                in1_layer_3[i * LAYER_2_WIDTH + j] <= in1_layer_3[i * LAYER_2_WIDTH + j];
+                in2_layer_3[i * LAYER_2_WIDTH + j] <= in2_layer_3[i * LAYER_2_WIDTH + j];
+            end
+
+            acc_in1_layer_3[i] <= acc_in1_layer_3[i];
+            acc_in2_layer_3[i] <= acc_in2_layer_3[i];
+
+            out_layer_3[i] <= out_layer_3[i];
+        end
+
+        layer_3_index <= layer_3_index;
+        layer_3_next_index <= layer_3_next_index;
+
+        for (i = 0; i < (LAYER_2_VOLUME * LAYER_3_DEPTH); i = i + 1) begin
+            layer_3_weights[i] <= layer_3_weights[i];
+        end
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            output_error[i] <= output_error[i];
+        end
+
+        for (i = 0; i < LAYER_2_WIDTH; i = i + 1) begin
+            layer_3_der_patch[i] <= layer_3_der_patch[i];
+            layer_3_err_weight_patch[i] <= layer_3_err_weight_patch[i];
+            layer_3_acc[i] <= layer_3_acc[i];
+        end
+
+        for (i = 0; i < LAYER_2_VOLUME; i = i + 1) begin
+            layer_3_error[i] <= layer_3_error[i];
+        end
+
+        layer_3_err_depth_counter <= layer_3_err_depth_counter;
+        layer_3_err_next_depth_counter <= layer_3_err_next_depth_counter;
+        layer_3_err_index <= layer_3_err_index;
+        layer_3_err_next_index <= layer_3_err_next_index;
+
+        for (i = 0; i < LAYER_2_WIDTH; i = i + 1) begin
+            layer_3_gr_in_patch[i] <= layer_3_gr_in_patch[i];
+        end
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            for (j = 0; j < LAYER_2_WIDTH; j = j + 1) begin
+                layer_3_weight_patch[i * LAYER_2_WIDTH + j] <= layer_3_weight_patch[i * LAYER_2_WIDTH + j];
+            end
+        end
+
+        layer_3_gr_index <= layer_3_gr_next_index;
+        layer_3_gr_next_index <= layer_3_gr_next_index;
+        
+        Done <= 0;
+    end
+    STATE_L1_GR_COMPUTE: begin
+        for (i = 0; i < LAYER_1_DEPTH; i = i + 1) begin
+            for (j = 0; j < PATCH_LENGTH; j = j + 1) begin
+                in1_layer_1[i * PATCH_LENGTH + j] <= in1_layer_1[i * PATCH_LENGTH + j];
+                in2_layer_1[i * PATCH_LENGTH + j] <= in2_layer_1[i * PATCH_LENGTH + j];
+            end
+        end
+
+        for (i = 0; i < LAYER_1_DEPTH; i = i + 1) begin
+            act_der_layer_1[i] <= act_der_layer_1[i];
+        end
+
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            out_layer_1[i] <= out_layer_1[i];
+            der_layer_1[i] <= der_layer_1[i];
+        end
+
+        for (i = 0; i < (LAYER_2_WIDTH * LAYER_2_HEIGHT * INPUT_DEPTH); i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
+        layer_1_depth_counter <= layer_1_depth_counter;
+        layer_1_map <= layer_1_map;
+        layer_1_next_map <= layer_1_next_map;
+        layer_1_mode <= GR_MODE;
+        layer_1_acc <= ((layer_1_gr_row == 1) && (layer_1_gr_col == 1)) ? 0 : layer_1_acc;
+        layer_1_index <= layer_1_index;
+        layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= ((layer_1_gr_row == 1) && (layer_1_gr_col == 1)) ? (layer_1_map + 1) : layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= (layer_1_gr_col == 1) ? (layer_1_gr_row - 1) : layer_1_gr_next_row;
+        layer_1_gr_next_col <= (layer_1_gr_col == 1) ? (LAYER_1_WIDTH - 2) : (layer_1_gr_col - 1);
+
+        for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
+            for (j = 0; j < POOL_LENGTH; j = j + 1) begin
+                in_layer_2[i * POOL_LENGTH + j] <= in_layer_2[i * POOL_LENGTH + j];
+            end
+        end
+
+        for (i = 0; i < LAYER_2_VOLUME; i = i + 1) begin
+            out_layer_2[i] <= out_layer_2[i];
+            der_layer_2[i] <= der_layer_2[i];
+        end
+
+        layer_1_corner <= layer_1_corner;
+        layer_2_row <= layer_2_row;
+        layer_2_col <= layer_2_col;
+        layer_2_next_row <= layer_2_next_row;
+        layer_2_next_col <= layer_2_next_col;
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            for (j = 0; j < LAYER_2_WIDTH; j = j + 1) begin
+                in1_layer_3[i * LAYER_2_WIDTH + j] <= in1_layer_3[i * LAYER_2_WIDTH + j];
+                in2_layer_3[i * LAYER_2_WIDTH + j] <= in2_layer_3[i * LAYER_2_WIDTH + j];
+            end
+
+            acc_in1_layer_3[i] <= acc_in1_layer_3[i];
+            acc_in2_layer_3[i] <= acc_in2_layer_3[i];
+
+            out_layer_3[i] <= out_layer_3[i];
+        end
+
+        layer_3_index <= layer_3_index;
+        layer_3_next_index <= layer_3_next_index;
+
+        for (i = 0; i < (LAYER_2_VOLUME * LAYER_3_DEPTH); i = i + 1) begin
+            layer_3_weights[i] <= layer_3_weights[i];
+        end
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            output_error[i] <= output_error[i];
+        end
+
+        for (i = 0; i < LAYER_2_WIDTH; i = i + 1) begin
+            layer_3_der_patch[i] <= layer_3_der_patch[i];
+            layer_3_err_weight_patch[i] <= layer_3_err_weight_patch[i];
+            layer_3_acc[i] <= layer_3_acc[i];
+        end
+
+        for (i = 0; i < LAYER_2_VOLUME; i = i + 1) begin
+            layer_3_error[i] <= layer_3_error[i];
+        end
+
+        layer_3_err_depth_counter <= layer_3_err_depth_counter;
+        layer_3_err_next_depth_counter <= layer_3_err_next_depth_counter;
+        layer_3_err_index <= layer_3_err_index;
+        layer_3_err_next_index <= layer_3_err_next_index;
+
+        for (i = 0; i < LAYER_2_WIDTH; i = i + 1) begin
+            layer_3_gr_in_patch[i] <= layer_3_gr_in_patch[i];
+        end
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            for (j = 0; j < LAYER_2_WIDTH; j = j + 1) begin
+                layer_3_weight_patch[i * LAYER_2_WIDTH + j] <= layer_3_weight_patch[i * LAYER_2_WIDTH + j];
+            end
+        end
+
+        layer_3_gr_index <= layer_3_gr_next_index;
+        layer_3_gr_next_index <= layer_3_gr_next_index;
+        
+        Done <= 0;
+    end
+    STATE_L1_GR_UPDATE: begin
+        for (i = 0; i < LAYER_1_DEPTH; i = i + 1) begin
+            for (j = 0; j < PATCH_LENGTH; j = j + 1) begin
+                in1_layer_1[i * PATCH_LENGTH + j] <= in1_layer_1[i * PATCH_LENGTH + j];
+                in2_layer_1[i * PATCH_LENGTH + j] <= in2_layer_1[i * PATCH_LENGTH + j];
+            end
+        end
+
+        for (i = 0; i < LAYER_1_DEPTH; i = i + 1) begin
+            act_der_layer_1[i] <= act_der_layer_1[i];
+        end
+
+        for (i = 0; i < LAYER_1_VOLUME; i = i + 1) begin
+            out_layer_1[i] <= out_layer_1[i];
+            der_layer_1[i] <= der_layer_1[i];
+        end
+
+        for (i = 0; i < (LAYER_2_WIDTH * LAYER_2_HEIGHT * INPUT_DEPTH); i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
+        layer_1_depth_counter <= layer_1_depth_counter;
+        layer_1_map <= layer_1_map;
+        layer_1_next_map <= layer_1_next_map;
+        layer_1_mode <= layer_1_mode;
+        layer_1_acc <= layer_1_acc;
+        layer_1_index <= layer_1_index;
+        layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
+
+        for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
+            for (j = 0; j < POOL_LENGTH; j = j + 1) begin
+                in_layer_2[i * POOL_LENGTH + j] <= in_layer_2[i * POOL_LENGTH + j];
+            end
+        end
+
+        for (i = 0; i < LAYER_2_VOLUME; i = i + 1) begin
+            out_layer_2[i] <= out_layer_2[i];
+            der_layer_2[i] <= der_layer_2[i];
+        end
+
+        layer_1_corner <= layer_1_corner;
+        layer_2_row <= layer_2_row;
+        layer_2_col <= layer_2_col;
+        layer_2_next_row <= layer_2_next_row;
+        layer_2_next_col <= layer_2_next_col;
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            for (j = 0; j < LAYER_2_WIDTH; j = j + 1) begin
+                in1_layer_3[i * LAYER_2_WIDTH + j] <= in1_layer_3[i * LAYER_2_WIDTH + j];
+                in2_layer_3[i * LAYER_2_WIDTH + j] <= in2_layer_3[i * LAYER_2_WIDTH + j];
+            end
+
+            acc_in1_layer_3[i] <= acc_in1_layer_3[i];
+            acc_in2_layer_3[i] <= acc_in2_layer_3[i];
+
+            out_layer_3[i] <= out_layer_3[i];
+        end
+
+        layer_3_index <= layer_3_index;
+        layer_3_next_index <= layer_3_next_index;
+
+        for (i = 0; i < (LAYER_2_VOLUME * LAYER_3_DEPTH); i = i + 1) begin
+            layer_3_weights[i] <= layer_3_weights[i];
+        end
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            output_error[i] <= output_error[i];
+        end
+
+        for (i = 0; i < LAYER_2_WIDTH; i = i + 1) begin
+            layer_3_der_patch[i] <= layer_3_der_patch[i];
+            layer_3_err_weight_patch[i] <= layer_3_err_weight_patch[i];
+            layer_3_acc[i] <= layer_3_acc[i];
+        end
+
+        for (i = 0; i < LAYER_2_VOLUME; i = i + 1) begin
+            layer_3_error[i] <= layer_3_error[i];
+        end
+
+        layer_3_err_depth_counter <= layer_3_err_depth_counter;
+        layer_3_err_next_depth_counter <= layer_3_err_next_depth_counter;
+        layer_3_err_index <= layer_3_err_index;
+        layer_3_err_next_index <= layer_3_err_next_index;
+
+        for (i = 0; i < LAYER_2_WIDTH; i = i + 1) begin
+            layer_3_gr_in_patch[i] <= layer_3_gr_in_patch[i];
+        end
+
+        for (i = 0; i < LAYER_3_DEPTH; i = i + 1) begin
+            for (j = 0; j < LAYER_2_WIDTH; j = j + 1) begin
+                layer_3_weight_patch[i * LAYER_2_WIDTH + j] <= layer_3_weight_patch[i * LAYER_2_WIDTH + j];
+            end
+        end
+
+        layer_3_gr_index <= layer_3_gr_next_index;
+        layer_3_gr_next_index <= layer_3_gr_next_index;
+        
+        Done <= 0;
+    end
     STATE_FINAL_OUTPUT: begin
         for (i = 0; i < LAYER_1_DEPTH; i = i + 1) begin
             for (j = 0; j < PATCH_LENGTH; j = j + 1) begin
@@ -1815,6 +2778,10 @@ always @(CurrentState) begin
             der_layer_1[i] <= der_layer_1[i];
         end
 
+        for (i = 0; i < (LAYER_2_WIDTH * LAYER_2_HEIGHT * INPUT_DEPTH); i = i + 1) begin
+            layer_1_error[i] <= layer_1_error[i];
+        end
+
         layer_1_depth_counter <= layer_1_depth_counter;
         layer_1_map <= layer_1_map;
         layer_1_next_map <= layer_1_next_map;
@@ -1822,6 +2789,16 @@ always @(CurrentState) begin
         layer_1_acc <= layer_1_acc;
         layer_1_index <= layer_1_index;
         layer_1_next_index <= layer_1_next_index;
+        layer_1_err_next_map <= layer_1_err_next_map;
+        layer_2_err_row <= layer_2_err_row;
+        layer_2_err_col <= layer_2_err_col;
+        layer_2_err_next_row <= layer_2_err_next_row;
+        layer_2_err_next_col <= layer_2_err_next_col;
+        layer_1_gr_next_map <= layer_1_gr_next_map;
+        layer_1_gr_row <= layer_1_gr_row;
+        layer_1_gr_col <= layer_1_gr_col;
+        layer_1_gr_next_row <= layer_1_gr_next_row;
+        layer_1_gr_next_col <= layer_1_gr_next_col;
 
         for (i = 0; i < LAYER_2_DEPTH; i = i + 1) begin
             for (j = 0; j < POOL_LENGTH; j = j + 1) begin
@@ -1896,7 +2873,7 @@ always @(CurrentState) begin
     endcase
 end
 
-filter3x3 #(.KERNEL_SIZE(KERNEL_SIZE), .DEPTH(LAYER_1_DEPTH), .LEARNING_RATE(LEARNING_RATE), .WL(WL), .FL(FL)) filter_layer11(
+filter3x3 #(.KERNEL_SIZE(KERNEL_SIZE), .DEPTH(INPUT_DEPTH), .LEARNING_RATE(LEARNING_RATE), .WL(WL), .FL(FL)) filter_layer11(
     .CLK(CLK), 
     .RESET(RESET), 
     .acc(layer_1_acc), 
@@ -2012,6 +2989,24 @@ filter3x3 #(.KERNEL_SIZE(KERNEL_SIZE), .DEPTH(INPUT_DEPTH), .LEARNING_RATE(LEARN
     .out2(out2_layer_1[3])
 );
 
+add_with_saturate #(.WL(WL), .FL(FL)) layer_1_bp_acc1(
+    .a(out1_layer_1[0]),
+    .b(out1_layer_1[1]),
+    .out(layer_1_err_sum[0])
+);
+
+add_with_saturate #(.WL(WL), .FL(FL)) layer_1_bp_acc2(
+    .a(out1_layer_1[2]),
+    .b(out1_layer_1[3]),
+    .out(layer_1_err_sum[1])
+);
+
+add_with_saturate #(.WL(WL), .FL(FL)) layer_1_bp_acc3(
+    .a(layer_1_err_sum[0]),
+    .b(layer_1_err_sum[1]),
+    .out(layer_1_err_sum[2])
+);
+
 pool2x2 #(.WL(WL), .FL(FL)) pool11(
     .in1(in_layer_2[0]),
     .in2(in_layer_2[1]),
@@ -2056,12 +3051,12 @@ sigma_prime #(.WL(WL), .FL(FL)) act_der_layer_2_2(
 
 sigma_prime #(.WL(WL), .FL(FL)) act_der_layer_2_3(
     .in(out1_layer_2[2]),
-    .out(out2_layer_2[3])
+    .out(out2_layer_2[2])
 );
 
 sigma_prime #(.WL(WL), .FL(FL)) act_der_layer_2_4(
     .in(out1_layer_2[3]),
-    .out(out2_layer_2[4])
+    .out(out2_layer_2[3])
 );
 
 fc16x1 #(.WL(WL), .FL(WL), .PATCH_LENGTH(LAYER_2_WIDTH)) fc1(
