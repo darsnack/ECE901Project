@@ -27,3 +27,9 @@ Tensorflow
   - _fully_connected_feed.py_: Run this using `python fully_connected_feed.py` to train the network.
   - _input_data.py_: Just for reference. The training code pulls this file in via `import`.
   - _mnist.py_: Just for reference. The training code pulls this file in via `import`.
+ - _TFCNNTutorial_: Contains source code for TF CNN tutorial (https://www.tensorflow.org/versions/master/tutorials/deep_cnn/index.html)
+  - _cifar10.py_: Just for reference. The training code pulls this file in via `import`.
+  - _cifar10_input.py_: Just for reference. The model code pulls this file in via `import`.
+  - _cifar10_train.py_: Run this using `python cifar10_train.py` to train the network.
+ - _TwoLayerCNN_: Contains source code for CPU implementation of custom two layer CNN.
+  - _model.py_: Contains the model related functions like `inference()`, `loss()`, and `train()`.
