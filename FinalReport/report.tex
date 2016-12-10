@@ -1,0 +1,103 @@
+ \documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+% \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading nips_2016
+%
+% to avoid loading the natbib package, add option nonatbib:
+% \usepackage[nonatbib]{nips_2016}
+
+\usepackage[final,nonatbib]{../LaTeXStyleFiles/nips_2016}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+% \usepackage[final]{nips_2016}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage[colorlinks]{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{calc}
+\usetikzlibrary{circuits.logic.US}
+
+\tikzset{
+  multiplexer/.style={
+    draw,
+    trapezium,
+    shape border uses incircle, 
+    shape border rotate=270,
+    minimum size=18pt
+  }
+}
+
+\bibliographystyle{ieeetr}
+
+\title{Project Proposal}
+
+% The \author macro works with any number of authors. There are two
+% commands used to separate the names and addresses of multiple
+% authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to
+% break the lines. Using \AND forces a line break at that point. So,
+% if LaTeX puts 3 of 4 authors names on the first line, and the last
+% on the second line, try using \AND instead of \And before the third
+% author name.
+
+\author{
+    Kyle~Daruwalla \\
+    Department of Electrical and Computer Engineering \\
+    University of Wisconsin -- Madison \\
+    \texttt{daruwalla@wisc.edu} \\
+    \And
+    Akhil~Sundararajun \\
+    Department of Electrical and Computer Engineering \\
+    University of Wisconsin -- Madison \\
+    \texttt{asundararaja@wisc.edu} \\
+}
+
+\begin{document}
+
+\maketitle
+
+% Each section (including abstract) has its own .tex file
+% The name of the .tex file corresponds to the section title
+% e.x. The subsection in the Introduction on FPGAs is called
+%      intro-fpga.tex
+% \input{filename} is equivalent to pasting in the raw text
+% from filename.tex.
+% Try to edit the filename.tex files and not proposal.tex.
+% This avoids conflicts most of the time.
+
+\section{Introduction}
+\input{intro}
+\subsection{Field-Programmable Gate Arrays}
+\input{intro-fpga}
+
+\section{Design Methodology}
+\input{implementation}
+\subsection{TensorFlow Baseline}
+\input{implementation-tf}
+\subsection{Convolutional Neural Networks on FPGAs}
+\input{implementation-fpga}
+\subsection{MATLAB Verification}
+\input{implementation-matlab}
+
+\section{Results}
+\input{results}
+
+\section{Conclusion}
+\input{conclusion}
+
+\newpage
+\nocite{*}
+\bibliography{references}
+
+\end{document}
