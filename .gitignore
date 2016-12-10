@@ -1,6 +1,10 @@
 # For Mac stuff
 *.DS_Store
 
+# For CIFAR-10 dataset
+cifar-10-matlab.tar
+cifar-10-batches-mat/
+
 # Created by https://www.gitignore.io/api/python,latex,vivado
 
 ### Python ###
