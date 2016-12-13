@@ -51,7 +51,7 @@ FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_string('train_dir', '/tmp/cifar10_train',
                            """Directory where to write event logs """
                            """and checkpoint.""")
-tf.app.flags.DEFINE_integer('max_steps', 1000000,
+tf.app.flags.DEFINE_integer('max_steps', 100000,
                             """Number of batches to run.""")
 tf.app.flags.DEFINE_boolean('log_device_placement', False,
                             """Whether to log device placement.""")
@@ -95,10 +95,13 @@ def train():
 
     summary_writer = tf.train.SummaryWriter(FLAGS.train_dir, sess.graph)
 
+    total_time = 0
+    loss_array = []
     for step in xrange(FLAGS.max_steps):
       start_time = time.time()
       _, loss_value = sess.run([train_op, loss])
       duration = time.time() - start_time
+      total_time += duration
 
       assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
@@ -107,19 +110,26 @@ def train():
         examples_per_sec = num_examples_per_step / duration
         sec_per_batch = float(duration)
 
-        format_str = ('%s: step %d, loss = %.2f (%.1f examples/sec; %.3f '
+        format_str = ('%.2f min: step %d, loss = %.2f (%.1f examples/sec; %.3f '
                       'sec/batch)')
-        print (format_str % (datetime.now(), step, loss_value,
+        print (format_str % ((total_time / 60.0), step, loss_value,
                              examples_per_sec, sec_per_batch))
 
       if step % 100 == 0:
+        loss_array.append(loss_value)
         summary_str = sess.run(summary_op)
         summary_writer.add_summary(summary_str, step)
+        with open('loss_output.csv', 'w') as file:
+          for loss_item in loss_array:
+            file.write("%.3f," % loss_item)
 
       # Save the model checkpoint periodically.
       if step % 1000 == 0 or (step + 1) == FLAGS.max_steps:
         checkpoint_path = os.path.join(FLAGS.train_dir, 'model.ckpt')
         saver.save(sess, checkpoint_path, global_step=step)
+        with open('loss_output.csv', 'w') as file:
+          for loss_item in loss_array:
+            file.write("%.3f," % loss_item)
 
 
 def main(argv=None):  # pylint: disable=unused-argument
