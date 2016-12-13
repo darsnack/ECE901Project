@@ -23,3 +23,4 @@ for i = 1:layerOut.depth
     layerOut.value(:,:,i) = relu_activate(preActivation);
 end
 
+end
