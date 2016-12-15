@@ -17,7 +17,7 @@ end
 
 for i = 1:layerOut.depth
     for j = 1:layerIn.depth
-        layerOut.value(:,:,i) = layerOut.value(:,:,i) + conv2(layerIn.value(:,:,j),weights.value(:,:,j),'same');        
+        layerOut.value(:,:,i) = layerOut.value(:,:,i) + conv2(layerIn.value(:,:,j),weights.value(:,:,j,i),'same');        
     end
     preActivation = layerOut.value(:,:,i) + bias.value(i);
     layerOut.value(:,:,i) = relu_activate(preActivation);
