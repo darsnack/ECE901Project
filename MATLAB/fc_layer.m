@@ -4,7 +4,7 @@ function [ layerOut ] = fc_layer( layerIn , weights , bias )
 
 layerOut.height = 1;
 layerOut.width = 1;
-layerOut.depth = weights.channelsOut;
+layerOut.depth = weights.out;
 layerOut.value = zeros(layerOut.height,layerOut.width,layerOut.depth);
 
 layerInTranspose = layerIn;

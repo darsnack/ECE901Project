@@ -8,10 +8,10 @@ function [ layerOut ] = conv_layer( layerIn , weights , bias )
 
 layerOut.height = layerIn.height;
 layerOut.width = layerIn.width;
-layerOut.depth = weights.channelsOut;
+layerOut.depth = weights.out;
 layerOut.value = zeros(layerOut.height,layerOut.width,layerOut.depth);
 
-if (weights.channelsIn ~= layerIn.depth)
+if (weights.in ~= layerIn.depth)
    error('Error: Number of slices in input layer must be == number of slices in kernel.') 
 end
 

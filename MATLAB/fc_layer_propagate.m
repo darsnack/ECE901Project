@@ -9,7 +9,7 @@ layerDerivativeTranspose = layerDerivative;
 layerDerivativeTranspose.value = transpose_layer(layerDerivative.value,layer.depth);
 
 % vectorize the derivative maps and backpropagate
-errorOutVec = (weights.value'*errorIn).*layerDerivative(layer).*layerDerivativeTranspose.value(:);
+errorOutVec = (weights.value'*errorIn).*layerDerivativeTranspose.value(:);
 
 % cubify the errorOutVec vector
 dim = layer.height;
