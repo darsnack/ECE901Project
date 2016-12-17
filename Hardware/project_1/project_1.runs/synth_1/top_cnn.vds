@@ -1,0 +1,520 @@
+#-----------------------------------------------------------
+# Vivado v2015.3 (64-bit)
+# SW Build 1368829 on Mon Sep 28 20:06:43 MDT 2015
+# IP Build 1367837 on Mon Sep 28 08:56:14 MDT 2015
+# Start of session at: Mon Dec 12 00:08:51 2016
+# Process ID: 2292
+# Current directory: Z:/project_1/project_1.runs/synth_1
+# Command line: vivado.exe -log top_cnn.vds -mode batch -messageDb vivado.pb -notrace -source top_cnn.tcl
+# Log file: Z:/project_1/project_1.runs/synth_1/top_cnn.vds
+# Journal file: Z:/project_1/project_1.runs/synth_1\vivado.jou
+#-----------------------------------------------------------
+source top_cnn.tcl -notrace
+Command: synth_design -top top_cnn -part xc7a200tffg1156-3 -mode out_of_context
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a200t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a200t'
+WARNING: [Synth 8-1958] event expressions must result in a singular type [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:245]
+WARNING: [Synth 8-1958] event expressions must result in a singular type [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:245]
+WARNING: [Synth 8-1958] event expressions must result in a singular type [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:245]
+---------------------------------------------------------------------------------
+Starting Synthesize : Time (s): cpu = 00:00:06 ; elapsed = 00:00:18 . Memory (MB): peak = 275.094 ; gain = 103.273
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'top_cnn' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:2]
+	Parameter WL bound to: 16 - type: integer 
+	Parameter FL bound to: 14 - type: integer 
+	Parameter KERNEL_SIZE bound to: 3 - type: integer 
+	Parameter PATCH_LENGTH bound to: 9 - type: integer 
+	Parameter POOL_LENGTH bound to: 4 - type: integer 
+	Parameter LEARNING_RATE bound to: 16'b0011110011000000 
+	Parameter MAP_BITS bound to: 4 - type: integer 
+	Parameter DIM_BITS bound to: 10 - type: integer 
+	Parameter INPUT_DEPTH bound to: 3 - type: integer 
+	Parameter LAYER_1_DEPTH bound to: 4 - type: integer 
+	Parameter LAYER_1_WIDTH bound to: 32 - type: integer 
+	Parameter LAYER_1_HEIGHT bound to: 32 - type: integer 
+	Parameter LAYER_1_VOLUME bound to: 4096 - type: integer 
+	Parameter LAYER_2_DEPTH bound to: 4 - type: integer 
+	Parameter LAYER_2_WIDTH bound to: 16 - type: integer 
+	Parameter LAYER_2_HEIGHT bound to: 16 - type: integer 
+	Parameter LAYER_2_VOLUME bound to: 1024 - type: integer 
+	Parameter LAYER_3_DEPTH bound to: 10 - type: integer 
+	Parameter LAYER_3_WIDTH bound to: 1 - type: integer 
+	Parameter LAYER_3_HEIGHT bound to: 1 - type: integer 
+	Parameter LAYER_3_VOLUME bound to: 10 - type: integer 
+	Parameter FF_MODE bound to: 0 - type: integer 
+	Parameter FB_MODE bound to: 1 - type: integer 
+	Parameter GR_MODE bound to: 2 - type: integer 
+	Parameter STATE_RESET bound to: 0 - type: integer 
+	Parameter STATE_WAIT bound to: 1 - type: integer 
+	Parameter STATE_L1_START bound to: 2 - type: integer 
+	Parameter STATE_L1_DATA bound to: 3 - type: integer 
+	Parameter STATE_L1_COMPUTE bound to: 4 - type: integer 
+	Parameter STATE_L1_OUTPUT bound to: 5 - type: integer 
+	Parameter STATE_L2_DATA bound to: 6 - type: integer 
+	Parameter STATE_L2_OUTPUT bound to: 7 - type: integer 
+	Parameter STATE_L3_DATA bound to: 8 - type: integer 
+	Parameter STATE_L3_ACC bound to: 9 - type: integer 
+	Parameter STATE_L3_OUTPUT bound to: 10 - type: integer 
+	Parameter STATE_ERROR bound to: 11 - type: integer 
+	Parameter STATE_L3_ERR_DATA bound to: 12 - type: integer 
+	Parameter STATE_L3_ERR_ACC bound to: 13 - type: integer 
+	Parameter STATE_L3_ERR_INCR bound to: 14 - type: integer 
+	Parameter STATE_L3_GR_DATA bound to: 15 - type: integer 
+	Parameter STATE_L3_GR_UPDATE bound to: 16 - type: integer 
+	Parameter STATE_L1_ERR_DATA bound to: 17 - type: integer 
+	Parameter STATE_L1_ERR_OUTPUT bound to: 18 - type: integer 
+	Parameter STATE_L1_GR_START bound to: 19 - type: integer 
+	Parameter STATE_L1_GR_DATA bound to: 20 - type: integer 
+	Parameter STATE_L1_GR_COMPUTE bound to: 21 - type: integer 
+	Parameter STATE_L1_GR_UPDATE bound to: 22 - type: integer 
+	Parameter STATE_FINAL_OUTPUT bound to: 23 - type: integer 
+WARNING: [Synth 8-567] referenced signal 'layer_1_depth_counter' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:129]
+WARNING: [Synth 8-567] referenced signal 'layer_1_index' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:129]
+WARNING: [Synth 8-567] referenced signal 'layer_2_row' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:129]
+WARNING: [Synth 8-567] referenced signal 'layer_2_col' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:129]
+WARNING: [Synth 8-567] referenced signal 'layer_3_index' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:129]
+WARNING: [Synth 8-567] referenced signal 'layer_3_err_depth_counter' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:129]
+WARNING: [Synth 8-567] referenced signal 'layer_3_err_index' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:129]
+WARNING: [Synth 8-567] referenced signal 'layer_3_gr_index' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:129]
+WARNING: [Synth 8-567] referenced signal 'layer_1_map' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:129]
+WARNING: [Synth 8-567] referenced signal 'layer_2_err_row' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:129]
+WARNING: [Synth 8-567] referenced signal 'layer_2_err_col' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:129]
+WARNING: [Synth 8-567] referenced signal 'layer_1_gr_row' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:129]
+WARNING: [Synth 8-567] referenced signal 'layer_1_gr_col' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:129]
+INFO: [Synth 8-155] case statement is not full and has no default [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:197]
+WARNING: [Synth 8-567] referenced signal 'in1_layer_1' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'in2_layer_1' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'act_der_layer_1' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'out_layer_1' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'der_layer_1' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_error' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'in_layer_2' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'out_layer_2' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'der_layer_2' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'in1_layer_3' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'in2_layer_3' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_weights' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'output_error' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_der_patch' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_err_weight_patch' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_acc' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_error' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_gr_in_patch' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_weight_patch' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'in1' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'in2' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'in3' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'in4' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'in5' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'in6' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'in7' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'in8' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'in9' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_next_index' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_err_next_map' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_2_err_row' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_2_err_col' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_2_err_next_row' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_2_err_next_col' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_gr_next_map' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_gr_row' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_gr_col' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_gr_next_row' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_gr_next_col' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_corner' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_2_row' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_2_col' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_2_next_row' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_2_next_col' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_index' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_next_index' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_err_depth_counter' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_err_next_depth_counter' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_err_index' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_err_next_index' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_gr_next_index' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_depth_counter' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_next_map' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_index' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'acc_in1_layer_3' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'acc_in2_layer_3' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'out_layer_3' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_map' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'out1_layer_1' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'out2_layer_1' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_mode' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_1_acc' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'out1_layer_2' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'out2_layer_2' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'out1_layer_3' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'acc_out_layer_3' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'output_error_q' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_new_acc' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_gr_index' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+WARNING: [Synth 8-567] referenced signal 'layer_3_gr_update_patch' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:196]
+INFO: [Synth 8-638] synthesizing module 'filter3x3' [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:3]
+	Parameter KERNEL_SIZE bound to: 3 - type: integer 
+	Parameter DEPTH bound to: 3 - type: integer 
+	Parameter PATCH_LENGTH bound to: 9 - type: integer 
+	Parameter VOLUME bound to: 27 - type: integer 
+	Parameter LEARNING_RATE bound to: 16'b0011110011000000 
+	Parameter WL bound to: 16 - type: integer 
+	Parameter FL bound to: 14 - type: integer 
+	Parameter LARGEST_NUM bound to: 16'b0111111111111111 
+	Parameter SMALLEST_NUM bound to: 32768 - type: integer 
+	Parameter ACC_LARGE_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter ACC_SMALL_NUM bound to: -1073741824 - type: integer 
+	Parameter FF_MODE bound to: 0 - type: integer 
+	Parameter FB_MODE bound to: 1 - type: integer 
+	Parameter GR_MODE bound to: 2 - type: integer 
+	Parameter STATE_RESET bound to: 0 - type: integer 
+	Parameter STATE_WAIT bound to: 1 - type: integer 
+	Parameter STATE_DOT_PRODUCT bound to: 2 - type: integer 
+	Parameter STATE_ACCUMULATE bound to: 3 - type: integer 
+	Parameter STATE_ACTIVATE bound to: 4 - type: integer 
+	Parameter STATE_UPDATE bound to: 5 - type: integer 
+INFO: [Synth 8-155] case statement is not full and has no default [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:108]
+WARNING: [Synth 8-567] referenced signal 'acc_reg' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:130]
+WARNING: [Synth 8-567] referenced signal 'prev_acc_sign' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:130]
+WARNING: [Synth 8-567] referenced signal 'prev_acc_in_sign' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:130]
+WARNING: [Synth 8-567] referenced signal 'acc_overflow' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:130]
+WARNING: [Synth 8-567] referenced signal 'acc_overflow_dir' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:130]
+WARNING: [Synth 8-567] referenced signal 'acc_sign' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:130]
+WARNING: [Synth 8-567] referenced signal 'acc_in_sign' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:130]
+WARNING: [Synth 8-567] referenced signal 'bias_acc_reg' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:169]
+WARNING: [Synth 8-567] referenced signal 'prev_bias_acc_sign' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:169]
+WARNING: [Synth 8-567] referenced signal 'prev_bias_acc_in_sign' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:169]
+WARNING: [Synth 8-567] referenced signal 'bias_acc_overflow' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:169]
+WARNING: [Synth 8-567] referenced signal 'bias_acc_overflow_dir' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:169]
+WARNING: [Synth 8-567] referenced signal 'bias_acc_sign' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:169]
+WARNING: [Synth 8-567] referenced signal 'bias_acc_in_sign' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:169]
+INFO: [Synth 8-638] synthesizing module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/stochastic_quantizer.v:2]
+	Parameter WL bound to: 16 - type: integer 
+	Parameter FL bound to: 14 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'lfsr' [Z:/project_1/project_1.srcs/sources_1/new/lfsr.v:2]
+	Parameter WL bound to: 14 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'lfsr' (1#1) [Z:/project_1/project_1.srcs/sources_1/new/lfsr.v:2]
+INFO: [Synth 8-256] done synthesizing module 'stochastic_quantizer' (2#1) [Z:/project_1/project_1.srcs/sources_1/new/stochastic_quantizer.v:2]
+WARNING: [Synth 8-567] referenced signal 'new_weights' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:224]
+WARNING: [Synth 8-567] referenced signal 'map' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:224]
+WARNING: [Synth 8-567] referenced signal 'new_bias' should be on the sensitivity list [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:224]
+INFO: [Common 17-14] Message 'Synth 8-567' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-155] case statement is not full and has no default [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:246]
+INFO: [Synth 8-638] synthesizing module 'sigma' [Z:/project_1/project_1.srcs/sources_1/new/sigma.v:2]
+	Parameter WL bound to: 16 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'sigma' (3#1) [Z:/project_1/project_1.srcs/sources_1/new/sigma.v:2]
+INFO: [Synth 8-638] synthesizing module 'sigma_prime' [Z:/project_1/project_1.srcs/sources_1/new/sigma_prime.v:2]
+	Parameter WL bound to: 16 - type: integer 
+	Parameter FL bound to: 14 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'sigma_prime' (4#1) [Z:/project_1/project_1.srcs/sources_1/new/sigma_prime.v:2]
+INFO: [Synth 8-638] synthesizing module 'sub_with_saturate' [Z:/project_1/project_1.srcs/sources_1/new/sub_with_saturate.v:2]
+	Parameter WL bound to: 16 - type: integer 
+	Parameter FL bound to: 14 - type: integer 
+	Parameter LARGEST_NUM bound to: 16'b0111111111111111 
+	Parameter SMALLEST_NUM bound to: 32768 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'sub_with_saturate' (5#1) [Z:/project_1/project_1.srcs/sources_1/new/sub_with_saturate.v:2]
+INFO: [Synth 8-256] done synthesizing module 'filter3x3' (6#1) [Z:/project_1/project_1.srcs/sources_1/new/filter3x3.v:3]
+WARNING: [Synth 8-689] width (4) of port connection 'map' does not match port width (3) of module 'filter3x3' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:2881]
+WARNING: [Synth 8-689] width (4) of port connection 'map' does not match port width (3) of module 'filter3x3' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:2910]
+WARNING: [Synth 8-689] width (4) of port connection 'map' does not match port width (3) of module 'filter3x3' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:2939]
+WARNING: [Synth 8-689] width (4) of port connection 'map' does not match port width (3) of module 'filter3x3' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:2968]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 16 - type: integer 
+	Parameter FL bound to: 14 - type: integer 
+	Parameter LARGEST_NUM bound to: 16'b0111111111111111 
+	Parameter SMALLEST_NUM bound to: 32768 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate' (7#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+INFO: [Synth 8-638] synthesizing module 'pool2x2' [Z:/project_1/project_1.srcs/sources_1/new/pool2x2.v:2]
+	Parameter WL bound to: 16 - type: integer 
+	Parameter FL bound to: 14 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'max2' [Z:/project_1/project_1.srcs/sources_1/new/max2.v:2]
+	Parameter WL bound to: 16 - type: integer 
+	Parameter FL bound to: 14 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'max2' (8#1) [Z:/project_1/project_1.srcs/sources_1/new/max2.v:2]
+INFO: [Synth 8-256] done synthesizing module 'pool2x2' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/pool2x2.v:2]
+INFO: [Synth 8-638] synthesizing module 'fc16x1' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:2]
+	Parameter WL bound to: 16 - type: integer 
+	Parameter FL bound to: 16 - type: integer 
+	Parameter PATCH_LENGTH bound to: 16 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized0' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized0' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized0' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:36]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized0' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:37]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized0' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:38]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized1' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized1' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized1' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:41]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized1' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:42]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized1' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:43]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized2' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized2' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized2' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:46]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized2' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:47]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized2' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:48]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized3' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized3' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized3' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:51]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized3' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:52]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized3' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:53]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized4' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized4' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized4' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:56]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized4' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:57]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized4' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:58]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized5' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized5' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized5' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:61]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized5' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:62]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized5' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:63]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized6' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized6' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized6' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:66]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized6' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:67]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized6' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:68]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized7' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized7' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized7' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:71]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized7' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:72]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized7' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:73]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized8' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized8' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized8' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:76]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized8' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:77]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized8' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:78]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized9' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized9' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized9' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:81]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized9' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:82]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized9' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:83]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized10' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized10' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized10' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:86]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized10' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:87]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized10' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:88]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized11' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized11' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized11' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:91]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized11' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:92]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized11' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:93]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized12' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized12' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized12' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:96]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized12' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:97]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized12' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:98]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized13' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized13' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized13' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:101]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized13' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:102]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized13' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:103]
+INFO: [Synth 8-638] synthesizing module 'add_with_saturate__parameterized14' [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+	Parameter WL bound to: 31 - type: integer 
+	Parameter FL bound to: 32 - type: integer 
+	Parameter LARGEST_NUM bound to: 31'b0111111111111111111111111111111 
+	Parameter SMALLEST_NUM bound to: 1073741824 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'add_with_saturate__parameterized14' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/add_with_saturate.v:2]
+WARNING: [Synth 8-689] width (32) of port connection 'a' does not match port width (31) of module 'add_with_saturate__parameterized14' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:106]
+WARNING: [Synth 8-689] width (32) of port connection 'b' does not match port width (31) of module 'add_with_saturate__parameterized14' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:107]
+WARNING: [Synth 8-689] width (32) of port connection 'out' does not match port width (31) of module 'add_with_saturate__parameterized14' [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:108]
+INFO: [Synth 8-638] synthesizing module 'stochastic_quantizer__parameterized0' [Z:/project_1/project_1.srcs/sources_1/new/stochastic_quantizer.v:2]
+	Parameter WL bound to: 16 - type: integer 
+	Parameter FL bound to: 16 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'lfsr__parameterized0' [Z:/project_1/project_1.srcs/sources_1/new/lfsr.v:2]
+	Parameter WL bound to: 16 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'lfsr__parameterized0' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/lfsr.v:2]
+INFO: [Synth 8-256] done synthesizing module 'stochastic_quantizer__parameterized0' (9#1) [Z:/project_1/project_1.srcs/sources_1/new/stochastic_quantizer.v:2]
+WARNING: [Synth 8-350] instance 'quantizer' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:111]
+INFO: [Synth 8-256] done synthesizing module 'fc16x1' (10#1) [Z:/project_1/project_1.srcs/sources_1/new/fc16x1.v:2]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3665]
+WARNING: [Synth 8-350] instance 'output_error_quantizer1' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3662]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3672]
+WARNING: [Synth 8-350] instance 'output_error_quantizer2' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3669]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3679]
+WARNING: [Synth 8-350] instance 'output_error_quantizer3' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3676]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3686]
+WARNING: [Synth 8-350] instance 'output_error_quantizer4' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3683]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3693]
+WARNING: [Synth 8-350] instance 'output_error_quantizer5' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3690]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3700]
+WARNING: [Synth 8-350] instance 'output_error_quantizer6' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3697]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3707]
+WARNING: [Synth 8-350] instance 'output_error_quantizer7' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3704]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3714]
+WARNING: [Synth 8-350] instance 'output_error_quantizer8' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3711]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3721]
+WARNING: [Synth 8-350] instance 'output_error_quantizer9' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3718]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3728]
+WARNING: [Synth 8-350] instance 'output_error_quantizer10' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/top_cnn.v:3725]
+INFO: [Synth 8-638] synthesizing module 'fc_gr_update16x1' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:2]
+	Parameter PATCH_LENGTH bound to: 16 - type: integer 
+	Parameter WL bound to: 16 - type: integer 
+	Parameter FL bound to: 14 - type: integer 
+	Parameter LEARNING_RATE bound to: 16'b0011110011000000 
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:25]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer1' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:22]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:32]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer2' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:29]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:39]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer3' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:36]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:46]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer4' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:43]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:53]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer5' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:50]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:60]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer6' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:57]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:67]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer7' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:64]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:74]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer8' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:71]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:81]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer9' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:78]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:88]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer10' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:85]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:95]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer11' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:92]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:102]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer12' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:99]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:109]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer13' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:106]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:116]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer14' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:113]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:123]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer15' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:120]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:130]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer16' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:127]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:137]
+WARNING: [Synth 8-350] instance 'output_quantizer1' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:134]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:144]
+WARNING: [Synth 8-350] instance 'output_quantizer2' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:141]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:151]
+WARNING: [Synth 8-350] instance 'output_quantizer3' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:148]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:158]
+WARNING: [Synth 8-350] instance 'output_quantizer4' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:155]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:165]
+WARNING: [Synth 8-350] instance 'output_quantizer5' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:162]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:172]
+WARNING: [Synth 8-350] instance 'output_quantizer6' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:169]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:179]
+WARNING: [Synth 8-350] instance 'output_quantizer7' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:176]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:186]
+WARNING: [Synth 8-350] instance 'output_quantizer8' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:183]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:193]
+WARNING: [Synth 8-350] instance 'output_quantizer9' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:190]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:200]
+WARNING: [Synth 8-350] instance 'output_quantizer10' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:197]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:207]
+WARNING: [Synth 8-350] instance 'output_quantizer11' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:204]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:214]
+WARNING: [Synth 8-350] instance 'output_quantizer12' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:211]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:221]
+WARNING: [Synth 8-350] instance 'output_quantizer13' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:218]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:228]
+WARNING: [Synth 8-350] instance 'output_quantizer14' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:225]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:235]
+WARNING: [Synth 8-350] instance 'output_quantizer15' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:232]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:242]
+WARNING: [Synth 8-350] instance 'output_quantizer16' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:239]
+INFO: [Synth 8-256] done synthesizing module 'fc_gr_update16x1' (11#1) [Z:/project_1/project_1.srcs/sources_1/new/fc_gr_update16x1.v:2]
+INFO: [Synth 8-638] synthesizing module 'fc_bp16x1' [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:2]
+	Parameter PATCH_LENGTH bound to: 16 - type: integer 
+	Parameter WL bound to: 16 - type: integer 
+	Parameter FL bound to: 14 - type: integer 
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:23]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer1' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:20]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:30]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer2' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:27]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:37]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer3' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:34]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:44]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer4' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:41]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:51]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer5' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:48]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:58]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer6' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:55]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:65]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer7' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:62]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:72]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer8' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:69]
+WARNING: [Synth 8-689] width (16) of port connection 'in' does not match port width (32) of module 'stochastic_quantizer' [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:79]
+INFO: [Common 17-14] Message 'Synth 8-689' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+WARNING: [Synth 8-350] instance 'intermediate_quantizer9' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:76]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer10' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:83]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer11' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:90]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer12' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:97]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer13' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:104]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer14' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:111]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer15' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:118]
+WARNING: [Synth 8-350] instance 'intermediate_quantizer16' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:125]
+WARNING: [Synth 8-350] instance 'output_quantizer1' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:132]
+WARNING: [Synth 8-350] instance 'output_quantizer2' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:139]
+WARNING: [Synth 8-350] instance 'output_quantizer3' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:146]
+WARNING: [Synth 8-350] instance 'output_quantizer4' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:153]
+WARNING: [Synth 8-350] instance 'output_quantizer5' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:160]
+WARNING: [Synth 8-350] instance 'output_quantizer6' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:167]
+WARNING: [Synth 8-350] instance 'output_quantizer7' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:174]
+WARNING: [Synth 8-350] instance 'output_quantizer8' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:181]
+WARNING: [Synth 8-350] instance 'output_quantizer9' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:188]
+WARNING: [Synth 8-350] instance 'output_quantizer10' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:195]
+WARNING: [Synth 8-350] instance 'output_quantizer11' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:202]
+WARNING: [Synth 8-350] instance 'output_quantizer12' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:209]
+WARNING: [Synth 8-350] instance 'output_quantizer13' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:216]
+WARNING: [Synth 8-350] instance 'output_quantizer14' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:223]
+WARNING: [Synth 8-350] instance 'output_quantizer15' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:230]
+WARNING: [Synth 8-350] instance 'output_quantizer16' of module 'stochastic_quantizer' requires 5 connections, but only 4 given [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:237]
+INFO: [Synth 8-256] done synthesizing module 'fc_bp16x1' (12#1) [Z:/project_1/project_1.srcs/sources_1/new/fc_bp16x1.v:2]
