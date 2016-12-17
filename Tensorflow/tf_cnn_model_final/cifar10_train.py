@@ -44,7 +44,8 @@ import numpy as np
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 
-from tensorflow.models.image.cifar10 import cifar10
+# from tensorflow.models.image.cifar10 import cifar10
+import cifar10
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -55,6 +56,12 @@ tf.app.flags.DEFINE_integer('max_steps', 100000,
                             """Number of batches to run.""")
 tf.app.flags.DEFINE_boolean('log_device_placement', False,
                             """Whether to log device placement.""")
+# tf.app.flags.DEFINE_integer('batch_size', 128,
+#                             """Number of images to process in a batch.""")
+# tf.app.flags.DEFINE_string('data_dir', '/tmp/cifar10_data',
+#                            """Path to the CIFAR-10 data directory.""")
+# tf.app.flags.DEFINE_boolean('use_fp16', False,
+#                             """Train the model using fp16.""")
 
 
 def train():

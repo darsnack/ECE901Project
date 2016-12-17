@@ -48,14 +48,6 @@ from tensorflow.models.image.cifar10 import cifar10_input
 
 FLAGS = tf.app.flags.FLAGS
 
-# Basic model parameters.
-tf.app.flags.DEFINE_integer('batch_size', 128,
-                            """Number of images to process in a batch.""")
-tf.app.flags.DEFINE_string('data_dir', '/tmp/cifar10_data',
-                           """Path to the CIFAR-10 data directory.""")
-tf.app.flags.DEFINE_boolean('use_fp16', False,
-                            """Train the model using fp16.""")
-
 # Global constants describing the CIFAR-10 data set.
 IMAGE_SIZE = cifar10_input.IMAGE_SIZE
 NUM_CLASSES = cifar10_input.NUM_CLASSES
@@ -68,7 +60,7 @@ IMAGE_PIXELS = IMAGE_SIZE * IMAGE_SIZE * IMAGE_CHANNELS
 MOVING_AVERAGE_DECAY = 0.9999     # The decay to use for the moving average.
 NUM_EPOCHS_PER_DECAY = 350.0      # Epochs after which learning rate decays.
 LEARNING_RATE_DECAY_FACTOR = 1  # Learning rate decay factor.
-INITIAL_LEARNING_RATE = 0.1       # Initial learning rate.
+INITIAL_LEARNING_RATE = 0.001       # Initial learning rate.
 
 # If a model is trained with multiple GPUs, prefix all Op names with tower_name
 # to differentiate the operations. Note that this prefix is removed from the
@@ -227,10 +219,10 @@ def inference(images):
                                           stddev=0.04, wd=0.0)
     biases = _variable_on_cpu('biases', [NUM_CLASSES],
                               tf.constant_initializer(0.0))
-    softmax_linear = tf.add(tf.matmul(pool1, weights), biases, name=scope.name)
+    fc1 = tf.add(tf.matmul(reshape, weights), biases, name=scope.name)
     _activation_summary(fc1)
 
-  return softmax_linear
+  return fc1
 
 
 def loss(logits, labels):
@@ -246,7 +238,10 @@ def loss(logits, labels):
     Loss tensor of type float.
   """
   # Calculate the average cross entropy loss across the batch.
-  labels = tf.cast(labels, tf.int64)
+  #labels = tf.cast(labels, tf.float32)
+  labels_one_hot = tf.one_hot(labels, NUM_CLASSES)
+  # labels_one_hot = tf.Print(labels_one_hot, [labels_one_hot], message="labels = ", summarize=30)
+  #labels_one_hot = tf.cast(labels_one_hot, tf.float32)
   
   #cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(
   #    logits, labels, name='cross_entropy_per_example')
@@ -256,7 +251,8 @@ def loss(logits, labels):
   # The total loss is defined as the cross entropy loss plus all of the weight
   # decay terms (L2 loss).
   #return tf.add_n(tf.get_collection('losses'), name='total_loss')
-    return tf.nn.l2_loss(tf.subtract(labels, logits),'total_loss')
+  # logits = tf.Print(logits, [logits], message="logits = ", summarize=30)
+  return tf.nn.l2_loss(tf.subtract(labels_one_hot, logits),'total_loss')
 
 def _add_loss_summaries(total_loss):
   """Add summaries for losses in CIFAR-10 model.
