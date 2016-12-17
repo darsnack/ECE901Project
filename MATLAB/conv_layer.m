@@ -20,7 +20,9 @@ for i = 1:layerOut.depth
     for j = 1:layerIn.depth
         layerOut.value(:,:,i) = layerOut.value(:,:,i) + conv2(layerIn.value(:,:,j),weights.value(:,:,j,i),'same');        
     end
+    layerOut.value(:,:,i) = stochastic_quantize(layerOut.value(:, :, i));
     preActivation = layerOut.value(:,:,i) + bias.value(i);
+    preActivation = stochastic_quantize(preActivation);
     layerOut.derivative(:,:,i) = relu_derivative(preActivation);
     layerOut.value(:,:,i) = relu_activate(preActivation);
 end

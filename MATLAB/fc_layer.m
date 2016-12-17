@@ -10,7 +10,7 @@ layerOut.value = zeros(layerOut.height,layerOut.width,layerOut.depth);
 layerInTranspose = layerIn;
 layerInTranspose.value = transpose_layer(layerIn.value,layerIn.depth);
 
-preActivation = weights.value*layerInTranspose.value(:) + bias.value;
+preActivation = stochastic_quantize(stochastic_quantize(weights.value*layerInTranspose.value(:)) + bias.value);
 
 layerOut.derivative = relu_derivative(preActivation);
 layerOut.value = relu_activate(preActivation);  

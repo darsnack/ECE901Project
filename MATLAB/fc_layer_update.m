@@ -10,10 +10,10 @@ layerInTranspose = layerIn;
 layerInTranspose.value = transpose_layer(layerIn.value,layerIn.depth);
 
 % Update weights
-weightsNew.value = weightsOld.value - learningRate*(error*layerInTranspose.value(:)');
+weightsNew.value = weightsOld.value - stochastic_quantize(learningRate*stochastic_quantize(error*layerInTranspose.value(:)'));
 
 % Update biases
-biasNew.value = biasOld.value - learningRate*error;
+biasNew.value = stochastic_quantize(biasOld.value - stochastic_quantize(learningRate*error));
 
 end
 

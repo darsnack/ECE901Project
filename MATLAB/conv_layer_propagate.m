@@ -3,7 +3,7 @@ function [ errorOut ] = conv_layer_propagate( errorIn , layer , poolDim )
 %   Detailed explanation goes here
 
 for i = 1:layer.depth
-    errorOut(:,:,i) = layer.derivative(:,:,i).*kron(errorIn(:,:,i),ones(poolDim));
+    errorOut(:,:,i) = stochastic_quantize(layer.derivative(:,:,i).*kron(errorIn(:,:,i),ones(poolDim)));
 end
 
 end

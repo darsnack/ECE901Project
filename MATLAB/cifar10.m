@@ -19,6 +19,7 @@ info = struct('iter',0,'loss',0);
 % Initialize weights and biases
 weights1 = struct('dim',kernelDim,'in',channelsIn,'out',channelsOut,'value',[]);
 weights1.value = 0.05*randn(weights1.dim,weights1.dim,weights1.in,weights1.out);
+weights1.value = stochastic_quantize(weights1.value);
 % weights1.value = 0.125*ones(weights1.dim,weights1.dim,weights1.in,weights1.out);
 
 bias1 = struct('dim',channelsOut,'value',[]);
@@ -26,6 +27,7 @@ bias1.value = zeros(bias1.dim,1);
 
 weights2 = struct('dim',imageSize/poolDim,'in',channelsOut,'out',numClasses,'value',[]);
 weights2.value = 0.04*randn(weights2.out,weights2.dim*weights2.dim*weights2.in);
+weights2.value = stochastic_quantize(weights2.value);
 % weights2.value = 0.125*ones(weights2.out,weights2.dim*weights2.dim*weights2.in);
 
 bias2 = struct('dim',numClasses,'value',[]);
@@ -53,7 +55,8 @@ for i = 1:numBatches
            img(:,:,i) = reshape(singleImg,[imageSize,imageSize]);
         end
         layerIn = struct('height',imageSize,'width',imageSize,'depth',channelsIn,'value',img,'derivative',[]);
-                
+        layerIn.value = stochastic_quantize(layerIn.value);
+        
         % create label vector
         label = zeros(numClasses,1);
         label(classes(j)+1) = 1;
@@ -70,7 +73,7 @@ for i = 1:numBatches
         fprintf('\n Step %d: loss = %.4f ',info.iter,info.loss);
         
         % backpropagate errors     
-        error1 = (fc1.value - label).*(fc1.derivative);
+        error1 = stochastic_quantize((fc1.value - label).*(fc1.derivative));
         error2 = fc_layer_propagate(error1,pool1,weights2);
         error3 = conv_layer_propagate(error2,conv1,poolDim);
         

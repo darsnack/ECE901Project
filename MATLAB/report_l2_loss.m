@@ -5,7 +5,6 @@ if (length(label) ~= length(prediction))
    error('Error: argument "labels" must be 1-hot vector of same length as "prediction".') 
 end
 
-loss = 0.5*norm(label-prediction)^2;
+loss = stochastic_quantize(0.5*norm(label-prediction)^2);
 
 end
-
