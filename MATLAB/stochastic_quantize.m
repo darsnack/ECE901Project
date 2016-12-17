@@ -28,19 +28,21 @@ y(idx) = max_val;
 
 % Find values to quantize
 idx = find((x > min_val) & (x < max_val));
-% Push all the fractional bits into the integer domain
-% Everything below the decimal point is now excess
-y(idx) = x(idx) .* (2^frac_length);
-% Round according the distance of the number from the floor value
-floor_val = floor(y(idx));
-ceil_val = ceil(y(idx));
-p = y(idx) - floor_val;
-r = rand(length(idx), 1);
-ceil_idx = find(r < p);
-floor_idx = find(r >= p);
-y(idx(floor_idx)) = floor_val(floor_idx);
-y(idx(ceil_idx)) = ceil_val(ceil_idx);
-% Push fractional bits back into the fractional domain
-y(idx) = y(idx) .* epsilon;
+if (~isempty(idx))
+    % Push all the fractional bits into the integer domain
+    % Everything below the decimal point is now excess
+    y(idx) = x(idx) .* (2^frac_length);
+    % Round according the distance of the number from the floor value
+    floor_val = floor(y(idx));
+    ceil_val = ceil(y(idx));
+    p = y(idx) - floor_val;
+    r = rand(length(idx), 1);
+    ceil_idx = find(r < p);
+    floor_idx = find(r >= p);
+    y(idx(floor_idx)) = floor_val(floor_idx);
+    y(idx(ceil_idx)) = ceil_val(ceil_idx);
+    % Push fractional bits back into the fractional domain
+    y(idx) = y(idx) .* epsilon;
+end
 
 end

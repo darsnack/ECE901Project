@@ -18,7 +18,7 @@ info = struct('iter',0,'loss',0);
 
 % Initialize weights and biases
 weights1 = struct('dim',kernelDim,'in',channelsIn,'out',channelsOut,'value',[]);
-weights1.value = 0.05*randn(weights1.dim,weights1.dim,weights1.in,weights1.out);
+weights1.value = (1/imageSize^2)*randn(weights1.dim,weights1.dim,weights1.in,weights1.out);
 weights1.value = stochastic_quantize(weights1.value);
 % weights1.value = 0.125*ones(weights1.dim,weights1.dim,weights1.in,weights1.out);
 
@@ -26,7 +26,7 @@ bias1 = struct('dim',channelsOut,'value',[]);
 bias1.value = zeros(bias1.dim,1);
 
 weights2 = struct('dim',imageSize/poolDim,'in',channelsOut,'out',numClasses,'value',[]);
-weights2.value = 0.04*randn(weights2.out,weights2.dim*weights2.dim*weights2.in);
+weights2.value = (1/imageSize^2)*randn(weights2.out,weights2.dim*weights2.dim*weights2.in);
 weights2.value = stochastic_quantize(weights2.value);
 % weights2.value = 0.125*ones(weights2.out,weights2.dim*weights2.dim*weights2.in);
 
@@ -47,6 +47,8 @@ for i = 1:numBatches
         % Initialize input layer 
         img = reshape(data(sampleOrder(j),:),[imageSize,imageSize,channelsIn]);
         img = transpose_layer(img,channelsIn);
+        img = random_flip(img);
+        img = random_brightness(img);
         for ii = 1:channelsIn
            singleImg = img(:,:,i);
            singleImg = singleImg(:);
