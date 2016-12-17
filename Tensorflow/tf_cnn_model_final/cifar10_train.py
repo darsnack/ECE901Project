@@ -112,8 +112,9 @@ def train():
 
       assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
+      loss_array.append(loss_value / FLAGS.batch_size)
+
       if step % 10 == 0:
-        loss_array.append(loss_value / FLAGS.batch_size)
         num_examples_per_step = FLAGS.batch_size
         examples_per_sec = num_examples_per_step / duration
         sec_per_batch = float(duration)
