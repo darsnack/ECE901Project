@@ -13,7 +13,7 @@ for j = 1:weightsNew.out
 end
 
 % Update biases
-for i = 1:layerIn.depth
+for i = 1:biasNew.dim
     biasNew.value(i) = biasOld.value(i) - learningRate*sum(sum(error(:,:,i)));
 end
 

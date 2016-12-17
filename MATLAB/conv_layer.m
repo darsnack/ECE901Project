@@ -10,6 +10,7 @@ layerOut.height = layerIn.height;
 layerOut.width = layerIn.width;
 layerOut.depth = weights.out;
 layerOut.value = zeros(layerOut.height,layerOut.width,layerOut.depth);
+layerOut.derivative = zeros(layerOut.height,layerOut.width,layerOut.depth);
 
 if (weights.in ~= layerIn.depth)
    error('Error: Number of slices in input layer must be == number of slices in kernel.') 
@@ -20,6 +21,7 @@ for i = 1:layerOut.depth
         layerOut.value(:,:,i) = layerOut.value(:,:,i) + conv2(layerIn.value(:,:,j),weights.value(:,:,j,i),'same');        
     end
     preActivation = layerOut.value(:,:,i) + bias.value(i);
+    layerOut.derivative(:,:,i) = relu_derivative(preActivation);
     layerOut.value(:,:,i) = relu_activate(preActivation);
 end
 

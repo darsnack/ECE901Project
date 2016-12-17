@@ -11,6 +11,8 @@ layerInTranspose = layerIn;
 layerInTranspose.value = transpose_layer(layerIn.value,layerIn.depth);
 
 preActivation = weights.value*layerInTranspose.value(:) + bias.value;
+
+layerOut.derivative = relu_derivative(preActivation);
 layerOut.value = relu_activate(preActivation);  
 
 

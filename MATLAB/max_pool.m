@@ -8,6 +8,7 @@ layerOut.height = layerIn.height/dim;
 layerOut.width = layerIn.width/dim;
 layerOut.depth = layerIn.depth;
 layerOut.value = zeros(layerOut.height,layerOut.width,layerOut.depth);
+layerOut.derivative = zeros(layerOut.height,layerOut.width,layerOut.depth);
 
 for i = 1:layerOut.depth
     for j = 1:layerOut.width
@@ -19,6 +20,7 @@ for i = 1:layerOut.depth
             layerOut.value(k,j,i) = max(pool(:));
         end
     end
+    layerOut.derivative(:,:,i) = relu_derivative(layerOut.value(:,:,i));
 end
 
 

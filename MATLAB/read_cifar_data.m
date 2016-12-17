@@ -7,4 +7,6 @@ function [data, labels] = read_cifar_data(batch_num)
     filename = [filename '.mat'];
     
     load(filename);
+    data = double(data);
+    labels = double(labels);
 end
