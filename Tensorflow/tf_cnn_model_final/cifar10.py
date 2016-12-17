@@ -216,10 +216,11 @@ def inference(images):
     reshape = tf.reshape(pool1, [FLAGS.batch_size, -1])
     dim = reshape.get_shape()[1].value
     weights = _variable_with_weight_decay('weights', [dim, NUM_CLASSES],
-                                          stddev=0.04, wd=0.0)
+                                          stddev=1.0/dim, wd=0.0)
     biases = _variable_on_cpu('biases', [NUM_CLASSES],
                               tf.constant_initializer(0.0))
-    fc1 = tf.add(tf.matmul(reshape, weights), biases, name=scope.name)
+    pre_activation = tf.add(tf.matmul(reshape, weights), biases, name=scope.name)
+    fc1 = tf.nn.relu(pre_activation, name=scope.name)
     _activation_summary(fc1)
 
   return fc1
@@ -241,7 +242,7 @@ def loss(logits, labels):
   #labels = tf.cast(labels, tf.float32)
   labels_one_hot = tf.one_hot(labels, NUM_CLASSES)
   # labels_one_hot = tf.Print(labels_one_hot, [labels_one_hot], message="labels = ", summarize=30)
-  #labels_one_hot = tf.cast(labels_one_hot, tf.float32)
+  labels_one_hot = tf.cast(labels_one_hot, tf.float32)
   
   #cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(
   #    logits, labels, name='cross_entropy_per_example')

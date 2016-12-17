@@ -113,6 +113,7 @@ def train():
       assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
       if step % 10 == 0:
+        loss_array.append(loss_value / FLAGS.batch_size)
         num_examples_per_step = FLAGS.batch_size
         examples_per_sec = num_examples_per_step / duration
         sec_per_batch = float(duration)
@@ -123,7 +124,6 @@ def train():
                              examples_per_sec, sec_per_batch))
 
       if step % 100 == 0:
-        loss_array.append(loss_value)
         summary_str = sess.run(summary_op)
         summary_writer.add_summary(summary_str, step)
         with open('loss_output.csv', 'w') as file:
