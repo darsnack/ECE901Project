@@ -44,7 +44,8 @@ import numpy as np
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 
-from tensorflow.models.image.cifar10 import cifar10
+# from tensorflow.models.image.cifar10 import cifar10
+import cifar10
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -55,6 +56,12 @@ tf.app.flags.DEFINE_integer('max_steps', 100000,
                             """Number of batches to run.""")
 tf.app.flags.DEFINE_boolean('log_device_placement', False,
                             """Whether to log device placement.""")
+# tf.app.flags.DEFINE_integer('batch_size', 128,
+#                             """Number of images to process in a batch.""")
+# tf.app.flags.DEFINE_string('data_dir', '/tmp/cifar10_data',
+#                            """Path to the CIFAR-10 data directory.""")
+# tf.app.flags.DEFINE_boolean('use_fp16', False,
+#                             """Train the model using fp16.""")
 
 
 def train():
@@ -105,6 +112,8 @@ def train():
 
       assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
+      loss_array.append(loss_value / FLAGS.batch_size)
+
       if step % 10 == 0:
         num_examples_per_step = FLAGS.batch_size
         examples_per_sec = num_examples_per_step / duration
@@ -116,7 +125,6 @@ def train():
                              examples_per_sec, sec_per_batch))
 
       if step % 100 == 0:
-        loss_array.append(loss_value)
         summary_str = sess.run(summary_op)
         summary_writer.add_summary(summary_str, step)
         with open('loss_output.csv', 'w') as file:
