@@ -1,4 +1,6 @@
 %% Training CNN Model on CIFAR-10 Dataset
+% ECE 901 Project Fall 2016
+% Akhil Sundararajan and Kyle Daruwalla
 
 clear;
 close all;
@@ -13,39 +15,34 @@ poolStride = 1;
 channelsIn = 3;
 channelsOut = 4;
 numClasses = 10;
-learningRate = 0.003;
 
-info = struct('iter',0,'loss',0);
-
-% Initialize weights and biases
-weights1 = struct('dim',kernelDim,'in',channelsIn,'out',channelsOut,'value',[]);
-weights1.value = (1/imageSize^2)*randn(weights1.dim,weights1.dim,weights1.in,weights1.out);
-weights1.value = stochastic_quantize(weights1.value);
-% weights1.value = 0.125*ones(weights1.dim,weights1.dim,weights1.in,weights1.out);
-
-bias1 = struct('dim',channelsOut,'value',[]);
-bias1.value = zeros(bias1.dim,1);
-
-weights2 = struct('dim',imageSize/poolDim,'in',channelsOut,'out',numClasses,'value',[]);
-weights2.value = (1/imageSize^2)*randn(weights2.out,weights2.dim*weights2.dim*weights2.in);
-weights2.value = stochastic_quantize(weights2.value);
-% weights2.value = 0.125*ones(weights2.out,weights2.dim*weights2.dim*weights2.in);
-
-bias2 = struct('dim',numClasses,'value',[]);
-bias2.value = zeros(bias2.dim,1);
-
-numBatches = 2; % # of .mat data files to be read in
+% Training Parameters
+learningRate = 0.0005;
+numBatches = 5; % # of .mat data files to be read in
 batchSize = 10000; % of training examples to use per batch
 miniBatchSize = 128; % of of training examples in each mini batch
 numMiniBatches = ceil(batchSize/miniBatchSize);
 lastMiniBatchSize = mod(batchSize,miniBatchSize);
 lossVec = zeros(1,numBatches*numMiniBatches);
-
 % set last mini batch size to miniBatchSize if batchSize is a multiple of
 % miniBatchSize
 if (~lastMiniBatchSize)
     lastMiniBatchSize = miniBatchSize;
 end
+
+info = struct('iter',0,'loss',0);   % for reporting
+
+% Initialize weights and biases
+weights1 = struct('dim',kernelDim,'in',channelsIn,'out',channelsOut,'value',[]);
+weights1.value = (1/imageSize^2)*randn(weights1.dim,weights1.dim,weights1.in,weights1.out);
+weights1.value = stochastic_quantize(weights1.value);
+bias1 = struct('dim',channelsOut,'value',[]);
+bias1.value = zeros(bias1.dim,1);
+weights2 = struct('dim',imageSize/poolDim,'in',channelsOut,'out',numClasses,'value',[]);
+weights2.value = (1/imageSize^2)*randn(weights2.out,weights2.dim*weights2.dim*weights2.in);
+weights2.value = stochastic_quantize(weights2.value);
+bias2 = struct('dim',numClasses,'value',[]);
+bias2.value = zeros(bias2.dim,1);
 
 for i = 1:numBatches
     [data,classes] = read_cifar_data(i);
@@ -64,13 +61,13 @@ for i = 1:numBatches
         end
         
         % Initialize loss and errors for this mini batch
-         mbLoss = 0;
-         mbError1 = zeros(numClasses,1);
-         mbError2 = zeros(imageSize/poolDim,imageSize/poolDim,channelsOut);
-         mbError3 = zeros(imageSize,imageSize,channelsOut);
-        tic; 
+        mbLoss = 0;
+        mbError1 = zeros(numClasses,1);
+        mbError2 = zeros(imageSize/poolDim,imageSize/poolDim,channelsOut);
+        mbError3 = zeros(imageSize,imageSize,channelsOut);
+        tic;
         for j = 1:mbSize
-                       
+            
             % Initialize input layer
             img = reshape(data(sampleOrder(j),:),[imageSize,imageSize,channelsIn]);
             img = transpose_layer(img,channelsIn);
@@ -100,7 +97,7 @@ for i = 1:numBatches
             info.iter = info.iter + 1;
             
             % accumulate loss for this mini batch
-            mbLoss = mbLoss + report_l2_loss(label,fc1.value);          
+            mbLoss = mbLoss + report_l2_loss(label,fc1.value);
             
             % backpropagate errors
             error1 = stochastic_quantize((fc1.value - label).*(fc1.derivative));
@@ -123,7 +120,7 @@ for i = 1:numBatches
         % report loss (this is the average loss over this mini batch)
         info.loss = mbLoss;
         lossVec((i-1)*numMiniBatches+kk) = info.loss;
-        fprintf('\n Batch: %d Mini-Batch: %d loss = %.5f (%.4f samples/sec) ',i,kk,info.loss,mbSize/timerVal);      
+        fprintf('\n Batch: %d Mini-Batch: %d loss = %.5f (%.4f samples/sec) ',i,kk,info.loss,mbSize/timerVal);
         
         % update weights and biases (done once per mini batch);
         [weights2,bias2] = fc_layer_update(weights2,bias2,mbError1,pool1,learningRate);
@@ -134,7 +131,10 @@ for i = 1:numBatches
 end
 
 % Write out csv of lossVec
-csvwrite(matlabloss_0p003.csv,lossVec);
+filename = 'loss_matlab_';
+filename = [filename num2str(learningRate)];
+filename = [filename '.csv'];
+csvwrite(filename,lossVec);
 
 % Plot loss of every mini batch
 plot(lossVec);
