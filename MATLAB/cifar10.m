@@ -1,4 +1,6 @@
 %% Training CNN Model on CIFAR-10 Dataset
+% ECE 901 Project Fall 2016
+% Akhil Sundararajan and Kyle Daruwalla
 
 clear;
 close all;
@@ -13,84 +15,129 @@ poolStride = 1;
 channelsIn = 3;
 channelsOut = 4;
 numClasses = 10;
-learningRate = 0.001;
-info = struct('iter',0,'loss',0);
+
+% Training Parameters
+learningRate = 0.0005;
+numBatches = 5; % # of .mat data files to be read in
+batchSize = 10000; % of training examples to use per batch
+miniBatchSize = 128; % of of training examples in each mini batch
+numMiniBatches = ceil(batchSize/miniBatchSize);
+lastMiniBatchSize = mod(batchSize,miniBatchSize);
+lossVec = zeros(1,numBatches*numMiniBatches);
+% set last mini batch size to miniBatchSize if batchSize is a multiple of
+% miniBatchSize
+if (~lastMiniBatchSize)
+    lastMiniBatchSize = miniBatchSize;
+end
+
+info = struct('iter',0,'loss',0);   % for reporting
 
 % Initialize weights and biases
 weights1 = struct('dim',kernelDim,'in',channelsIn,'out',channelsOut,'value',[]);
 weights1.value = (1/imageSize^2)*randn(weights1.dim,weights1.dim,weights1.in,weights1.out);
 weights1.value = stochastic_quantize(weights1.value);
-% weights1.value = 0.125*ones(weights1.dim,weights1.dim,weights1.in,weights1.out);
-
 bias1 = struct('dim',channelsOut,'value',[]);
 bias1.value = zeros(bias1.dim,1);
-
 weights2 = struct('dim',imageSize/poolDim,'in',channelsOut,'out',numClasses,'value',[]);
 weights2.value = (1/imageSize^2)*randn(weights2.out,weights2.dim*weights2.dim*weights2.in);
 weights2.value = stochastic_quantize(weights2.value);
-% weights2.value = 0.125*ones(weights2.out,weights2.dim*weights2.dim*weights2.in);
-
 bias2 = struct('dim',numClasses,'value',[]);
 bias2.value = zeros(bias2.dim,1);
 
-lossVec = [];
-
-numBatches = 2;
-batchSize = 10000;
-
 for i = 1:numBatches
-    [data,classes] = read_cifar_data(i);  
+    [data,classes] = read_cifar_data(i);
     data = data/255;    % divide pixel values by 255
-    sampleOrder = randperm(batchSize);
-    for j = 1:batchSize
+    
+    for kk = 1:numMiniBatches
         
-        % Initialize input layer 
-        img = reshape(data(sampleOrder(j),:),[imageSize,imageSize,channelsIn]);
-        img = transpose_layer(img,channelsIn);
-        img = random_flip(img);
-        img = random_brightness(img);
-        for ii = 1:channelsIn
-           singleImg = img(:,:,i);
-           singleImg = singleImg(:);
-           adjStdDev = max(std(singleImg),1/imageSize);
-           singleImg = (singleImg - mean(singleImg))/adjStdDev;
-           img(:,:,i) = reshape(singleImg,[imageSize,imageSize]);
+        % Permute the sample indices in each mini batch.  if/else handles
+        % case of last mini batch which could be smaller than the rest.
+        if (kk ~= numMiniBatches)
+            sampleOrder = randperm(miniBatchSize) + (kk-1)*miniBatchSize;
+            mbSize = miniBatchSize;
+        else
+            sampleOrder = randperm(lastMiniBatchSize) + (kk-1)*miniBatchSize;
+            mbSize = lastMiniBatchSize;
         end
-        layerIn = struct('height',imageSize,'width',imageSize,'depth',channelsIn,'value',img,'derivative',[]);
-        layerIn.value = stochastic_quantize(layerIn.value);
         
-        % create label vector
-        label = zeros(numClasses,1);
-        label(classes(j)+1) = 1;
-        
-        conv1 = conv_layer(layerIn,weights1,bias1);
-        pool1 = max_pool(conv1,poolDim,poolStride);
-        fc1 = fc_layer(pool1,weights2,bias2);
-        
-        % report loss
-        info.loss = report_l2_loss(label,fc1.value);
-        if (mod(info.iter,10)==0) 
-            lossVec = [lossVec info.loss];
+        % Initialize loss and errors for this mini batch
+        mbLoss = 0;
+        mbError1 = zeros(numClasses,1);
+        mbError2 = zeros(imageSize/poolDim,imageSize/poolDim,channelsOut);
+        mbError3 = zeros(imageSize,imageSize,channelsOut);
+        tic;
+        for j = 1:mbSize
+            
+            % Initialize input layer
+            img = reshape(data(sampleOrder(j),:),[imageSize,imageSize,channelsIn]);
+            img = transpose_layer(img,channelsIn);
+            img = random_flip(img);
+            img = random_brightness(img);
+            for ii = 1:channelsIn
+                singleImg = img(:,:,ii);
+                singleImg = singleImg(:);
+                adjStdDev = max(std(singleImg),1/imageSize);
+                singleImg = (singleImg - mean(singleImg))/adjStdDev;
+                img(:,:,ii) = reshape(singleImg,[imageSize,imageSize]);
+            end
+            
+            % create layer struct
+            layerIn = struct('height',imageSize,'width',imageSize,'depth',channelsIn,'value',img,'derivative',[]);
+            layerIn.value = stochastic_quantize(layerIn.value);
+            
+            % create label vector
+            label = zeros(numClasses,1);
+            label(classes(sampleOrder(j))+1) = 1;
+            
+            conv1 = conv_layer(layerIn,weights1,bias1);
+            pool1 = max_pool(conv1,poolDim,poolStride);
+            fc1 = fc_layer(pool1,weights2,bias2);
+            
+            % update counter indicating 1 sample has been processed through FF
+            info.iter = info.iter + 1;
+            
+            % accumulate loss for this mini batch
+            mbLoss = mbLoss + report_l2_loss(label,fc1.value);
+            
+            % backpropagate errors
+            error1 = stochastic_quantize((fc1.value - label).*(fc1.derivative));
+            error2 = fc_layer_propagate(mbError1,pool1,weights2);
+            error3 = conv_layer_propagate(error2,conv1,poolDim);
+            
+            % accumulate errors for this mini batch
+            mbError1 = stochastic_quantize(mbError1 + error1);
+            mbError2 = stochastic_quantize(mbError2 + error2);
+            mbError3 = stochastic_quantize(mbError3 + error3);
         end
-        fprintf('\n Step %d: loss = %.4f ',info.iter,info.loss);
+        timerVal = toc;
         
-        % backpropagate errors     
-        error1 = stochastic_quantize((fc1.value - label).*(fc1.derivative));
-        error2 = fc_layer_propagate(error1,pool1,weights2);
-        error3 = conv_layer_propagate(error2,conv1,poolDim);
+        % average the loss and errors over this mini batch
+        mbLoss = mbLoss/mbSize;
+        mbError1 = stochastic_quantize(mbError1/mbSize);
+        mbError2 = stochastic_quantize(mbError2/mbSize);
+        mbError3 = stochastic_quantize(mbError3/mbSize);
         
-        % update weights and biases
-        [weights2,bias2] = fc_layer_update(weights2,bias2,error1,pool1,learningRate);
-        [weights1,bias1] = conv_layer_update(weights1,bias1,error3,layerIn,learningRate);
+        % report loss (this is the average loss over this mini batch)
+        info.loss = mbLoss;
+        lossVec((i-1)*numMiniBatches+kk) = info.loss;
+        fprintf('\n Batch: %d Mini-Batch: %d loss = %.5f (%.4f samples/sec) ',i,kk,info.loss,mbSize/timerVal);
         
-        info.iter = info.iter + 1;
+        % update weights and biases (done once per mini batch);
+        [weights2,bias2] = fc_layer_update(weights2,bias2,mbError1,pool1,learningRate);
+        [weights1,bias1] = conv_layer_update(weights1,bias1,mbError3,layerIn,learningRate);
         
     end
+    
 end
 
-% Plot loss every 100 samples
-plot(lossVec(2:end));
-xlabel('iterations (x100)');
-ylabel('loss')
+% Write out csv of lossVec
+filename = 'loss_matlab_';
+filename = [filename num2str(learningRate)];
+filename = [filename '.csv'];
+csvwrite(filename,lossVec);
 
-% report overall training error at the end
+% Plot loss of every mini batch
+plot(lossVec);
+xlabel('iterations (x128)');
+ylabel('loss')
+title(['2-norm Loss, Mini-Batch Size=' num2str(miniBatchSize) ', Learning Rate=' num2str(learningRate)]);
