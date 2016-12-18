@@ -17,7 +17,7 @@ channelsOut = 4;
 numClasses = 10;
 
 % Training Parameters
-learningRate = 0.0005;
+learningRate = 0.05;
 numBatches = 5; % # of .mat data files to be read in
 batchSize = 10000; % of training examples to use per batch
 miniBatchSize = 128; % of of training examples in each mini batch
