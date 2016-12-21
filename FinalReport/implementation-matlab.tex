@@ -1,1 +1,5 @@
 While our hardware implementation is serially equivalent to a traditional software implementation for a CNN, it does use limited precision. We implemented a limited precision CNN model of the hardware in MATLAB to verify its convergence.
+
+This was achieved by using a custom quantization function to limit the precision of the numbers used by MATLAB. Using a custom function allowed us to have tight control of the rounding scheme, and it is faster than using the object-oriented fixed-point model in MATLAB.
+
+Similar to the TensorFlow and hardware, the MATLAB simulation is also trained using mini-batch stochastic gradient descent with a batch size of 128 (same as TensorFlow). The purpose of this simulation was to emulate training the hardware on the same dataset as TensorFlow verify the hardware's convergence. It was not intended to be used for a timing comparison.
